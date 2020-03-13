@@ -34,12 +34,12 @@
 						}
 
 						$vendedor = "";
-            $dbVendedor = $this->vendedores_model->getRegistro($row->id_vendedor);
-            if ($dbVendedor) {
-              foreach ($dbVendedor as $row_vendedor) {
-                  $vendedor = $row_vendedor->vendedor;
-              }
-            }
+						$dbVendedor = $this->vendedores_model->getRegistro($row->id_vendedor);
+						if ($dbVendedor) {
+						  foreach ($dbVendedor as $row_vendedor) {
+							  $vendedor = $row_vendedor->vendedor;
+						  }
+						}
 
 						$cabecera = $impresion->cabecera;
 						$cabecera = str_replace("#presupuesto_nro#", $row->id_presupuesto, $cabecera);
