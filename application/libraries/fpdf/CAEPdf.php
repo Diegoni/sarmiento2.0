@@ -142,7 +142,7 @@ class CAEPdf extends FPDF {
 					$this->Ln($this->separation);
 					$this->SetFont('Arial','',8);
 					$cod_proveedor = (strlen($renglon->cod_proveedor) > 12) ? substr($renglon->cod_proveedor, 0, 9).'...' : $renglon->cod_proveedor;
-					$descripcion = (strlen($renglon->descripcion) > 50) ? substr($renglon->descripcion, 0, 46).'...' : $renglon->descripcion;
+					$descripcion = utf8_decode((strlen($renglon->descripcion) > 50) ? substr($renglon->descripcion, 0, 46).'...' : $renglon->descripcion);
 					$this->Cell(25,$this->dataSize, $cod_proveedor,0,0,'C');
 					$this->Cell(75,$this->dataSize, $descripcion,0,0,'L');
 					$this->Cell(15,$this->dataSize, $renglon->cantidad,0,0,'C');

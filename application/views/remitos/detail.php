@@ -16,10 +16,10 @@
   				<i class="icon-document"></i> Remito
   			</div>
   			<div class="panel-body">
-  				<a class="btn btn-default" href="<?php echo base_url().'index.php/remitos/remitos_abm/'?>"/>
+  				<a class="btn btn-default" href="<?php echo base_url().'index.php/remitos/crud'?>"/>
   					<i class="fa fa-arrow-left"></i> Remitos
   				</a>
-  				<a class="btn btn-default" href="<?php echo base_url().'index.php/remitos/remito/'?>"/>
+  				<a class="btn btn-default" href="<?php echo base_url().'index.php/remitos/insert'?>"/>
   					<i class="fa fa-plus-square"></i> Generar nuevo
   				</a>
   				<button class="btn btn-default" type="button" onclick="printDiv('printableArea')"/>

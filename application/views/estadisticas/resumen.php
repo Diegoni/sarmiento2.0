@@ -201,7 +201,7 @@ $acuenta_total	= 0;
 						echo "<td><a title='ver cliente' href='".base_url()."index.php/clientes/cliente_abm/read/".$row->id_cliente."' class='btn btn-info btn-xs'>
 							<span class='icon-user'></span>
 							</a>
-							<a title='ver remito' href='".base_url()."index.php/presupuestos/remito_vista/".$row->id_remito."' class='btn btn-primary btn-xs'>
+							<a title='ver remito' href='".base_url()."index.php/remitos/view/".$row->id_remito."' class='btn btn-primary btn-xs'>
 							<span class='icon-edit'></span>
 							</a>
 							</td>";

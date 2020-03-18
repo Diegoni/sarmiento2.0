@@ -3,7 +3,7 @@
 	<div class="panel-heading">BULONES SARMIENTO</div>
 		<div class="panel-body">
 			<div class="form-group">
-				<form method="post" action="<?php echo base_url().'index.php/presupuestos/remito'?>">
+				<form method="post" action="<?php echo base_url().'index.php/remitos/insertProcess'?>">
 				<label for="clientes" class="col-sm-1 control-label"><?php echo $texto['alias']?></label>
 
 				<div class="col-sm-4">
@@ -73,7 +73,7 @@
 			<br>
 			<br>
 
-			<form method="post" action="<?php echo base_url().'index.php/presupuestos/remito_insert'?>" onsubmit="return check();">
+			<form method="post" action="<?php echo base_url().'index.php/remitos/insertFinal'?>" onsubmit="return check();">
 
 			<ul class="nav nav-tabs">
 				<li><a href="#tab3" data-toggle="tab">Cliente: <b><?php echo $array_cliente['alias']?></b></a></li>
@@ -108,23 +108,17 @@
 
 				$total_apagar = 0;
 
-				if($presupuestos)
-				{
-					foreach ($presupuestos as $presupuesto)
-					{
-							if($presupuesto->comentario != '')
-							{
-								if($presupuesto->com_publico == 1)
-								{
-									$link_presupuesto = "<div class='col-sm-2'><a href='".base_url()."index.php/presupuestos/detalle_presupuesto/".$presupuesto->id_presupuesto."/1' class='btn btn-default btn-xs' title='Ver presupuesto - Comentario Publico' target='_blank'>".$presupuesto->id_presupuesto." <i class='fa fa-comment-o'></i> </a></div>";
-								}else
-								{
-									$link_presupuesto = "<div class='col-sm-2'><a href='".base_url()."index.php/presupuestos/detalle_presupuesto/".$presupuesto->id_presupuesto."/1' class='btn btn-default btn-xs' title='Ver presupuesto - Comentario Privado' target='_blank'>".$presupuesto->id_presupuesto." <i class='fa fa-comment'></i></a></div>";
-								}
-							}else
-							{
-								$link_presupuesto = "<div class='col-sm-2'><a href='".base_url()."index.php/presupuestos/detalle_presupuesto/".$presupuesto->id_presupuesto."/1' class='btn btn-default btn-xs' title='ver presupuesto' target='_blank'>".$presupuesto->id_presupuesto."</a></div>";
+				if($presupuestos) {
+					foreach ($presupuestos as $presupuesto) {
+							$comentIcon = '';
+							$comentTitle = '';
+
+							if($presupuesto->comentario != '') {
+								$comentIcon = " <i class='fa fa-comment-o'></i>";
+								$comentTitle = ' - Comentario '.($presupuesto->com_publico == 1) ? 'Publico' : 'Privado';
 							}
+							$link_presupuesto = "<div class='col-sm-2'><a href='".base_url()."index.php/presupuestos/update/".$presupuesto->id_presupuesto."/1' class='btn btn-default btn-xs' title='ver presupuesto ".$comentTitle."' target='_blank'>".$presupuesto->id_presupuesto.' '.$comentIcon." </a></div>";
+
 							echo "<div class='row'>";
 							echo $link_presupuesto;
 							echo "<div class='col-sm-3'>".date('d-m-Y', strtotime($presupuesto->fecha))."</div>";

@@ -3,7 +3,7 @@
 class Devoluciones extends My_Controller {
 
 	public function __construct() {
-		parent::__construct();}
+		parent::__construct();
 
 		$this->load->model('articulos_model');
 		$this->load->model('devoluciones_model');

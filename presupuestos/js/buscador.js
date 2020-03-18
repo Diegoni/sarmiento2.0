@@ -150,13 +150,18 @@ $(function() {
 				id_cliente	= ui.item.id_cliente;
 	      num_cuil	= ui.item.num_cuil;
 	    	dom_cli		= ui.item.direccion;
+				pertmite_cta_cte = ui.item.pertmite_cta_cte;
+				monto_max_presupuesto = ui.item.monto_max_presupuesto;
+
 				$("#carga_cliente").prop( "disabled", true);
 				$('#apellido_cliente').val(apellido_cli);
 				$('#nombre_cliente').val(nombre_cli);
 				$('#domicilio_cliente').val(dom_cli);
 				$('#cuit_cliente').val(num_cuil);
 				$('#id_cliente').val(id_cliente);
-				$('#forma_pago').val(CTA_CTE);
+				$('#forma_pago').val((pertmite_cta_cte == 1) ? CTA_CTE : CONTADO);
+				$('#pertmite_cta_cte').val(pertmite_cta_cte);
+				$('#monto_max_presupuesto').val(monto_max_presupuesto);
 		},
 
 		close: function( event, ui ) {}

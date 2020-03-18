@@ -157,12 +157,19 @@ class Clientes extends MY_Controller {
 		$crud = new grocery_CRUD();
 
 		$crud->set_table('tipo_cliente');
-		$crud->columns('tipo');
+		$crud->columns('tipo', 'permite_cta_cte', 'monto_max_presupuesto');
+		$crud->callback_column('permite_cta_cte', array($this,'_completeCtaCte'));
 
+		$crud->unset_delete();
+		$crud->unset_add();
 		$crud->set_subject('Tipo Cliente');
 
 		$output = $crud->render();
 
 		$this->crudView($output);
+	}
+
+	public function _completeCtaCte($value, $row) {
+		return '<i class="fa fa-'.(($row->pertmite_cta_cte == 1) ? 'check-square-o' : 'square-o ').'" aria-hidden="true"></i>';
 	}
 }

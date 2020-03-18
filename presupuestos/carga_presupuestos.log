@@ -336,3 +336,39 @@
 		)
 2020-02-25 07:47:041
 2020-02-25 07:47:04408578
+2020-03-17 00:12:53
+		INSERT INTO
+			reglon_presupuesto (
+				id_presupuesto,
+				id_articulo,
+				cantidad,
+				precio,
+				estado
+			)
+		VALUES(
+			172223,
+			21411,
+			1,
+			93.55369099999999,
+			1
+		)
+2020-03-17 00:12:531
+2020-03-17 00:12:53408580
+2020-03-17 00:12:53
+		INSERT INTO
+			reglon_presupuesto (
+				id_presupuesto,
+				id_articulo,
+				cantidad,
+				precio,
+				estado
+			)
+		VALUES(
+			172223,
+			19858,
+			3,
+			427.79186999999996,
+			1
+		)
+2020-03-17 00:12:531
+2020-03-17 00:12:53408581

@@ -143,6 +143,8 @@ while ($row = $result_config->fetch_array(MYSQLI_ASSOC)) {
                <label for="email" class="col-sm-2 control-label">Cuil/Cuit</label>
                <input class="data_cliente form-control" type="text" disabled id="cuit_cliente" value=""/>
            </div>
+           <input type="hidden" type="text"  id="pertmite_cta_cte" value="0"/>
+           <input type="hidden" type="text"  id="monto_max_presupuesto" value="0"/>
            <input type="hidden" type="text"  id="id_cliente" value="0"/>
          </div>
        </div>
