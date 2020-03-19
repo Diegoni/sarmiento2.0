@@ -56,16 +56,16 @@ class CAEPdf extends FPDF {
     $this->Cell(190,10,$copy,1,0,'C');
 		$this->Ln(10);
 		// Letra
-		$this->SetFont('Arial','B',10);
-		$this->Cell(87,15,"",0,0,'C');
+		$this->SetFont('Arial','B',15);
+		$this->Cell(87,16, strtoupper($this->_empresa->empresa),0,0,'C');
 		$this->SetFont('Arial','B',20);
 		$this->Cell(16,16, $this->letra,1,0,'C');
 		$this->SetFont('Arial','B',15);
 		$this->Cell(87,16,$comprobante,0,0,'C');
 		$this->Ln(16);
 		// Empresa
-		$this->SetFont('Arial','',10);
-		$this->Cell(89,$this->dataSize,"  Razon Social: ".$this->_empresa->empresa,0,0,'L');
+		$this->SetFont('Arial', '', 10);
+		$this->Cell(89,$this->dataSize,"  Domicilio Comercial: ".$this->_empresa->domicilio,0,0,'L');
 		$this->Cell(20,$this->dataSize,'',0,0,'C');
 		$cadena = ($this->letra != self::LETRA_PRESUPUESTO) ? 'Punto de venta: '.$this->_factura->pto_vta.' Comp Nro: '.str_pad($this->_factura->cbte_desde, 8, "0", STR_PAD_LEFT) : 'NRO: '.str_pad($this->_presupuesto->id_presupuesto, 11, "0", STR_PAD_LEFT) ;
 		$this->Cell(89,$this->dataSize, $cadena,0,0,'L');
@@ -78,7 +78,7 @@ class CAEPdf extends FPDF {
 		$this->Cell(89,$this->dataSize, ($this->letra != self::LETRA_PRESUPUESTO) ? $fecha : '',0,0,'L');
 		$this->Ln($this->dataSize);
 
-		$this->Cell(89,$this->dataSize,"  Domicilio Comercial: ".$this->_empresa->domicilio,0,0,'L');
+		$this->Cell(89,$this->dataSize,"  Telefono: ".$this->_empresa->telefono,0,0,'L');
 		$this->Cell(20,$this->dataSize,'',0,0,'C');
 		$cuit = ($this->letra != self::LETRA_PRESUPUESTO) ? 'CUIT: '.$this->_empresa->cuit : '';
 		$this->Cell(89,$this->dataSize, ($this->letra != self::LETRA_PRESUPUESTO) ? $cuit : $fecha,0,0,'L');

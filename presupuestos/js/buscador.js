@@ -54,11 +54,19 @@ function limpia_cli() {
 
 function carga_presupuesto() {
 	if($('#total_presupuesto').val() > 0) {
-		bandera_tipo_pago = $("#forma_pago").val();
-		cli_id = $("#id_cliente").val();
+		var bandera_tipo_pago = $("#forma_pago").val();
+		var cli_id = $("#id_cliente").val();
+		var pertmite_cta_cte = $("#pertmite_cta_cte").val();
+		var monto_max_presupuesto = $("#monto_max_presupuesto").val();
+		var total_presupuesto	= $("#total_presupuesto").val();
+
 
 		if (bandera_tipo_pago == CTA_CTE) {
-			if( cli_id != 0) {
+			if(pertmite_cta_cte == 0){
+				alert('Este tipo de cliente no permite ventas en CTA CTE');
+			} else if( parseFloat(total_presupuesto) > parseFloat(monto_max_presupuesto)) {
+				alert('El presupuesto supera el monto maximo permitido en CTA CTE, monto max = $ '+monto_max_presupuesto+' ');
+			} else if( cli_id != 0) {
 				if($('#descuento').val() > 0) {
 					if(confirm('¿Seguro que desea CTACTE + DESCUENTO?')) {
 						guarda_detalle(),fin_presupuesto();
@@ -73,7 +81,7 @@ function carga_presupuesto() {
 			} else {
 				alert("Seleccione un cliente o cambien condicion de pago");
 			}
-		} else{
+		} else {
 			if(cli_id != 0) {
 				guarda_detalle(),fin_presupuesto();
 			} else {
@@ -288,8 +296,8 @@ function carga(elem)
 ---------------------------------------------------------------------------------*/
 
 
-function agrega_a_reglon(este,texto,cantidad, bandera,px_unitario_sin_iva,porc_iva)
-{
+function agrega_a_reglon(este,texto,cantidad, bandera,px_unitario_sin_iva,porc_iva) {
+	var total_decimales_renglon = 3;
 	px_unitario	= px_unitario_sin_iva * ((porc_iva / 100) + 1);
 	px_reglon	= cantidad * px_unitario;
     iva			= (px_unitario_sin_iva * (porc_iva / 100)) * cantidad;
@@ -304,10 +312,10 @@ function agrega_a_reglon(este,texto,cantidad, bandera,px_unitario_sin_iva,porc_i
 		$('#reglon_factura').append('<div id="cont_borra'+este+'" class="cont_reglon_item_presup row" style="padding-left: 15px"></div>');
 		$('#cont_borra'+este).append('<span class="item_reglon col-md-5" id='+este+' >'+texto+'</span>');
 		$('#cont_borra'+este).append('<input  disabled class="cant_item_reglon col-md-1" id=cant_'+este+' value='+cantidad+'>');
-		$('#cont_borra'+este).append('<input disabled  class="px_item_reglon col-md-1" id=px_'+este+' value='+px_unitario+'>');
+		$('#cont_borra'+este).append('<input disabled  class="px_item_reglon col-md-1" id=px_'+este+' value='+px_unitario.toFixed(total_decimales_renglon)+'>');
 		$('#cont_borra'+este).append('<input disabled  class="porc_iva_item_reglon col-md-1" id=porc_iva_'+este+' value=%'+porc_iva+'>');
-		$('#cont_borra'+este).append('<input disabled  class="px_item_reglon_iva col-md-1" id=px_iva'+este+' value='+iva+'>');
-		$('#cont_borra'+este).append('<input disabled  class="px_reglon col-md-2" id=px_x_cant'+este+' value='+px_reglon+'>');
+		$('#cont_borra'+este).append('<input disabled  class="px_item_reglon_iva col-md-1" id=px_iva'+este+' value='+iva.toFixed(total_decimales_renglon)+'>');
+		$('#cont_borra'+este).append('<input disabled  class="px_reglon col-md-2" id=px_x_cant'+este+' value='+px_reglon.toFixed(total_decimales_renglon)+'>');
 		$('#cont_borra'+este).append('<div class="col-md-1" id=cont_botones'+este+'></div>');
 		$('#cont_botones'+este).append('<button title="Borrar linea" class="ico_borra btn btn-danger btn-xs pull-left" onclick="borra_reglon('+este+')" id="ico_borra'+este+'"></button>');
 		$('#ico_borra'+este).append('<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>');
