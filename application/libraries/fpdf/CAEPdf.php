@@ -100,12 +100,13 @@ class CAEPdf extends FPDF {
 			$dataChar = 'Inicio de actividades: '.date("d-m-Y", strtotime($this->_empresa->inicio_actividad));
 		} else {
 			$dataChar = '';
-			foreach ($this->_vendedores as $vendedor) {
-				if($vendedor->id_vendedor == $this->_presupuesto->id_vendedor){
-					$dataChar = 'Vendedor: '.$vendedor->vendedor;
+			if($this->_vendedores){
+				foreach ($this->_vendedores as $vendedor) {
+					if($vendedor->id_vendedor == $this->_presupuesto->id_vendedor){
+						$dataChar = 'Vendedor: '.$vendedor->vendedor;
+					}
 				}
 			}
-
 		};
 		$this->Cell(89,$this->dataSize, $dataChar,0,0,'L');
 		$this->Ln($this->dataSize +7);

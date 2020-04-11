@@ -16,7 +16,7 @@ class AfipFactuaElectronica extends My_Controller {
 
 		public function __construct() {
 			parent::__construct();
-			
+
 			$this->load->model('afip_model');
 			$this->load->model('clientes_model');
 			$this->load->model('facturas_model');
@@ -56,7 +56,7 @@ class AfipFactuaElectronica extends My_Controller {
 			$this->afip_model->update($updateAfip,  $this->afipConfig->id_afip);
 
 			$updatePresupuesto = [
-				'estado' => self::ESTADO_CAE,
+				'facturado' => 1,
 			];
 			$this->presupuestos_model->update($updatePresupuesto, $idPresupuesto);
 

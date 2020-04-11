@@ -163,7 +163,7 @@
 
   			if($row->estado != 3)
   			{
-					if($row->estado != 4) {
+					if($row->facturado != 1) {
   			?>
 				<button class="btn btn-default" type="button" onclick="printDiv('printableArea')"/>
   				<i class="fa fa-print"></i> Imprimir
@@ -176,7 +176,7 @@
 					if(!$llamada)
 	  			{
 	  				// Presupuesto pendiente de pago
-		  			if($row->tipo == 2 && $row->estado != 4)
+		  			if($row->tipo == 2)
 		  			{
 		  			?>
 		  			<a href="<?php echo base_url().'index.php/devoluciones/generar/'.$id_presupuesto?>" class="btn btn-default"/>
@@ -190,7 +190,7 @@
 		  			}
 
 					// Presupuesto pagado
-		  			if($row->tipo == 1 && $row->estado != 4) {
+		  			if($row->tipo == 1 && $row->facturado != 1) {
 		  			?>
 		  				<a href="<?php echo base_url().'index.php/presupuestos/anular/'.$id_presupuesto?>" class="btn btn-default"/>
 		  					<i class="fa fa-trash-o"></i> Anular
@@ -209,7 +209,7 @@
 				}
 			}
 
-			if($row->estado == 1 || $row->estado == 2){
+			if($row->facturado != 1){
 				echo '<button class="btn btn-default" type="button" id="btn-get-cae" value="'.$id_presupuesto.'"/>
 						<i class="fa fa-cloud-upload"></i> Obtener CAE
 					</button>';

@@ -187,7 +187,7 @@ class Presupuestos extends MY_Controller {
 		$presupuesto = $presupuesto[0];
 		$rengloPresupuesto = $this->renglon_presupuesto_model->getDetalle($id_presupuesto);
 
-		if($presupuesto->estado == ESTADO_PRESUPUESTO::FACTURADA){
+		if($presupuesto->facturado == 1){
 			$factura = $this->facturas_model->getBusqueda(['id_presupuesto' => $id_presupuesto]);
 			$factura = $factura[0];
 			$vendedores = false;
@@ -347,24 +347,14 @@ class Presupuestos extends MY_Controller {
 				$db['impresiones']			= $this->config_impresion_model->getRegistro(2);
 				$db['devoluciones']			= $this->devoluciones_model->getBusqueda($condicion);
 				$db['anulaciones']			= $this->anulaciones_model->getAnulaciones($id);
-				$db['factura']			= $this->facturas_model->getFactura($id);
+				$db['factura']	= $this->facturas_model->getFactura($id);
+				$db['llamada'] = ($llamada == NULL) ? FALSE : TRUE;
 
-				if($llamada == NULL) {
-					$db['llamada'] = FALSE;
-					$this->load->view('head.php',$db);
-					$this->load->view('menu.php');
-					$this->load->view('presupuestos/detalle_presupuestos.php');
-					$this->load->view('footer.php');
-				} else {
-					$db['llamada'] = TRUE;
-					$this->load->view('head.php',$db);
-					$this->load->view('presupuestos/detalle_presupuestos.php');
-				}
+				$this->setView('presupuestos/detalle_presupuestos.php', $db);
 			}else{
 				redirect('/','refresh');
 			}
 		}
-
 
 
 
