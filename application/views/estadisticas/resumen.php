@@ -246,7 +246,7 @@ $acuenta_total	= 0;
 						$devolucion_a_cuenta= $devolucion_a_cuenta + $row->a_cuenta;
 
 						echo "<td>
-							<a title='ver devolución' href='".base_url()."index.php/devoluciones/devoluciones_abm/".$row->id_devolucion."' class='btn btn-primary btn-xs'>
+							<a title='ver devolución' href='".base_url()."index.php/devoluciones/crud/".$row->id_devolucion."' class='btn btn-primary btn-xs'>
 							<span class='icon-edit'></span>
 							</a>
 							</td>";

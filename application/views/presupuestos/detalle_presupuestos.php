@@ -132,7 +132,7 @@
 					echo setMensaje($mensaje, 'warning');
 				}
 
-				if($row->estado == 4) {
+				if($row->facturado == 1) {
 					$letra = ($factura[0]->cbte_tipo == 1) ? 'A' : 'B';
 					echo '<a href="'.base_url().'index.php/presupuestos/setPDF/'.$id_presupuesto.'" target="_blank"><div class="well" style="color: #fff; background-color: #428bca;"><center>FACTURA '.$letra.': '.str_pad($factura[0]->cbte_desde, 8, "0", STR_PAD_LEFT).'</center></div></a>';
 				}

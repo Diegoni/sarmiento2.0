@@ -7,7 +7,7 @@ $(function() {
 	function getCae(id_presupuesto){
 		$.ajax({
 				type: "POST",
-				url: 'http://localhost/sarmiento-nuevo/index.php/afipFactuaElectronica/getCAE/'+id_presupuesto,
+				url: 'http://localhost/sarmiento2.0/index.php/afipFactuaElectronica/getCAE/'+id_presupuesto,
 				// data : { presupuesto : presupuesto },
 				complete: function(response)
 				{

@@ -41,9 +41,9 @@ $version = explode("/", $_SERVER["REQUEST_URI"]);
             while ($row_presupuesto = $result_presupuestos->fetch_array(MYSQLI_ASSOC)) {
               $tbody .= "<tr onclick='imprimir(".$row_presupuesto['id_presupuesto'].")'>";
               $tbody .= "<td>".$row_presupuesto['id_presupuesto']."</td>";
-              $tbody .= "<td>". date("d-m H:i", strtotime($row_presupuesto['fecha']))."</td>";
-              $tbody .= "<td>".round($row_presupuesto['monto'], 3)."</td>";
-              $tbody .= "<td>".round($row_presupuesto['descuento'], 3)."</td>";
+              $tbody .= "<td>". date("d-m-Y H:i", strtotime($row_presupuesto['fecha']))."</td>";
+              $tbody .= "<td>$ ".round($row_presupuesto['monto'], 3)."</td>";
+              $tbody .= "<td>$ ".round($row_presupuesto['descuento'], 3)."</td>";
               $tbody .= "<td>".$row_presupuesto['alias']." - ".$row_presupuesto['apellido'].", ".$row_presupuesto['nombre']."</td>";
               $tbody .= "</tr>";
             }
@@ -70,6 +70,7 @@ function imprimir(id_presupuesto){
 </script>
 <style>
 #imprimirTable td{
+  font-size: 12px;
   cursor: pointer;
 }
 </style>

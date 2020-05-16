@@ -41,7 +41,7 @@ class CAEPdf extends FPDF {
 
 	// Cabecera de página
 	function Header() {
-		if ($this->_presupuesto->estado == self::ESTADO_CAE) {
+		if ($this->_presupuesto->facturado == 1) {
 			$this->letra = ($this->_factura->cbte_tipo == self::CBTE_TIPO_A) ? 'A' : 'B';
 			$comprobante = 'FACTURA';
 			$copy = $this->copy[1];

@@ -6,7 +6,6 @@ class AfipFactuaElectronica extends My_Controller {
 
 		const ESTADO_CONTADO = 1;
 		const ESTADO_FALTA_PAGO = 2;
-		const ESTADO_CAE = 4;
 
 		const COND_IVA_MONOTRIBUTISTA = 1;
 		const COND_IVA_RESP_INSC = 2;
@@ -26,9 +25,13 @@ class AfipFactuaElectronica extends My_Controller {
 			$empresa = $this->empresas_model->getRegistros(1);
 			$this->empresa = $empresa[0];
 		}
-		/*
 
-		*/
+		/**
+		 * Web services para generar el Cae
+		 *
+		 * @param type $idPresupuesto id del presupuesto.
+		 * @return string Cae o error obtenido.
+		 */
 		public function getCAE($id_presupuesto = NULL) {
 			$presupuesto = ($id_presupuesto != NULL) ? $this->presupuestos_model->getBusqueda(['id_presupuesto' => $id_presupuesto] ) : json_decode($_POST['presupuesto']);
 			$cliente = $this->clientes_model->getCliente($presupuesto[0]->id_cliente);
@@ -48,6 +51,79 @@ class AfipFactuaElectronica extends My_Controller {
 			}
 		}
 
+		/**
+		 * Web services con la afip para la obtencion del Cae
+		 *
+		 * @param array $presupuesto datos del presupuesto.
+		 * @return array Datos obtenidos en el web services.
+		 */
+		private function setSoap($presupuesto) {
+			$dataEmpresa = 	[	'cert' => 'sarmientows_4ac84b96cef5e957.crt',
+					'key' => 'privada.key',
+					'CUIT' => 30672163494,
+					'production' => TRUE
+				];
+
+			$afip = $this->load->library('/afip/Afip', $dataEmpresa);
+
+			$ImpTotal = round($presupuesto[0]->monto, 2);
+			$ImpNeto = round($ImpTotal / 1.21, 2);
+			$ImpIVA = $ImpTotal - $ImpNeto;
+
+			$data = array(
+				'CantReg' 		=> 1, // Cantidad de comprobantes a registrar
+				'PtoVta' 			=> $this->empresa->punto_venta, // Punto de venta
+				'CbteTipo' 		=> $this->afipConfig->tipo_comprobante, // Tipo de comprobante (ver tipos disponibles)
+				'Concepto' 		=> $this->afipConfig->concepto, // Concepto del Comprobante: (1)Productos, (2)Servicios, (3)Productos y Servicios
+				'DocTipo' 		=> 80, // Tipo de documento del comprador (ver tipos disponibles)
+				'DocNro' 			=> 20111111112, // Numero de documento del comprador
+				'CbteDesde' 	=> $this->afipConfig->cbte_desde, // Numero de comprobante o numero del primer comprobante en caso de ser mas de uno
+				'CbteHasta' 	=> $this->afipConfig->cbte_hasta, // Numero de comprobante o numero del ultimo comprobante en caso de ser mas de uno
+				'CbteFch' 		=> intval(date('Ymd')), // (Opcional) Fecha del comprobante (yyyymmdd) o fecha actual si es nulo
+
+				'ImpTotal' 		=> $ImpTotal, // Importe total del comprobante ImpTotConc + ImpNeto + ImpOpEx + ImpTrib + ImpIVA.
+				'ImpTotConc' 	=> 0, // Importe neto no gravado
+				'ImpNeto' 		=> $ImpNeto, // Importe neto gravado
+				'ImpOpEx' 		=> 0, // Importe exento de IVA
+				'ImpIVA' 			=> $ImpIVA, //Importe total de IVA
+				'ImpTrib' 		=> 0, //Importe total de tributos
+
+				'FchServDesde'=> NULL, // (Opcional) Fecha de inicio del servicio (yyyymmdd), obligatorio para Concepto 2 y 3
+				'FchServHasta'=> NULL, // (Opcional) Fecha de fin del servicio (yyyymmdd), obligatorio para Concepto 2 y 3
+				'FchVtoPago' 	=> NULL, // (Opcional) Fecha de vencimiento del servicio (yyyymmdd), obligatorio para Concepto 2 y 3
+				'MonId' 			=> 'PES', //Tipo de moneda usada en el comprobante (ver tipos disponibles)('PES' para pesos argentinos)
+				'MonCotiz' 		=> $this->empresa->moneda, // Cotización de la moneda usada (1 para pesos argentinos)
+				'Iva' 				=> array( // (Opcional) Alícuotas asociadas al comprobante
+					array(
+						'Id' 		=> 5, // Id del tipo de IVA (ver tipos disponibles)
+						'BaseImp' 	=> $ImpNeto, // Base imponible
+						'Importe' 	=> $ImpIVA // Importe
+					)
+				),
+			);
+
+			$afip = new Afip( $dataEmpresa );
+
+			try{
+				$caeData = $afip->ElectronicBilling->CreateVoucher($data);
+				$this->factData = $data;
+			} catch (Exception $e){
+				$caeData = false;
+				log_message ('ERROR', $e);
+				echo  $e;
+				throw new \Exception("Error Intento de crear CAE", 2);
+			}
+
+			return $caeData;
+		}
+
+		/**
+		 * Guarda los datos obtenidos en el Web Services.
+		 *
+		 * @param type $caeData Datos obtenidos en el web services.
+		 * @param type $idPresupuesto id del presupuesto.
+		 * @return void Description.
+		 */
 		private function setCae($caeData, $idPresupuesto){
 			$updateAfip = [
 				'cbte_desde' =>  $this->afipConfig->cbte_desde + 1,
@@ -87,70 +163,6 @@ class AfipFactuaElectronica extends My_Controller {
 			];
 
 			$this->facturas_model->insert($insertFactura);
-		}
-
-		private function setSoap($presupuesto) {
-			$afip = $this->load->library('/afip/Afip',
-				[	'cert' => 'sarmientoTest.crt',
-					'key' => 'privada.key',
-					'CUIT' => 27115801282 ]
-			);
-
-			$ImpTotal = round($presupuesto[0]->monto, 2);
-			$ImpNeto = round($ImpTotal / 1.21, 2);
-			$ImpIVA = $ImpTotal - $ImpNeto;
-
-			$data = array(
-				'CantReg' 		=> 1, // Cantidad de comprobantes a registrar
-				'PtoVta' 			=> $this->empresa->punto_venta, // Punto de venta
-				'CbteTipo' 		=> $this->afipConfig->tipo_comprobante, // Tipo de comprobante (ver tipos disponibles)
-				'Concepto' 		=> $this->afipConfig->concepto, // Concepto del Comprobante: (1)Productos, (2)Servicios, (3)Productos y Servicios
-				'DocTipo' 		=> 80, // Tipo de documento del comprador (ver tipos disponibles)
-				'DocNro' 			=> 20111111112, // Numero de documento del comprador
-				'CbteDesde' 	=> $this->afipConfig->cbte_desde, // Numero de comprobante o numero del primer comprobante en caso de ser mas de uno
-				'CbteHasta' 	=> $this->afipConfig->cbte_hasta, // Numero de comprobante o numero del ultimo comprobante en caso de ser mas de uno
-				'CbteFch' 		=> intval(date('Ymd')), // (Opcional) Fecha del comprobante (yyyymmdd) o fecha actual si es nulo
-
-				'ImpTotal' 		=> $ImpTotal, // Importe total del comprobante ImpTotConc + ImpNeto + ImpOpEx + ImpTrib + ImpIVA.
-				'ImpTotConc' 	=> 0, // Importe neto no gravado
-				'ImpNeto' 		=> $ImpNeto, // Importe neto gravado
-				'ImpOpEx' 		=> 0, // Importe exento de IVA
-				'ImpIVA' 			=> $ImpIVA, //Importe total de IVA
-				'ImpTrib' 		=> 0, //Importe total de tributos
-
-				'FchServDesde'=> NULL, // (Opcional) Fecha de inicio del servicio (yyyymmdd), obligatorio para Concepto 2 y 3
-				'FchServHasta'=> NULL, // (Opcional) Fecha de fin del servicio (yyyymmdd), obligatorio para Concepto 2 y 3
-				'FchVtoPago' 	=> NULL, // (Opcional) Fecha de vencimiento del servicio (yyyymmdd), obligatorio para Concepto 2 y 3
-				'MonId' 			=> 'PES', //Tipo de moneda usada en el comprobante (ver tipos disponibles)('PES' para pesos argentinos)
-				'MonCotiz' 		=> $this->empresa->moneda, // Cotización de la moneda usada (1 para pesos argentinos)
-				'Iva' 				=> array( // (Opcional) Alícuotas asociadas al comprobante
-					array(
-						'Id' 		=> 5, // Id del tipo de IVA (ver tipos disponibles)
-						'BaseImp' 	=> $ImpNeto, // Base imponible
-						'Importe' 	=> $ImpIVA // Importe
-					)
-				),
-			);
-
-			$afip = new Afip(
-				[
-					'cert' => 'sarmientoTest.crt',
-					'key' => 'privada.key',
-					'CUIT' => 27115801282
-				]
-			);
-
-			try{
-				$caeData = $afip->ElectronicBilling->CreateVoucher($data);
-				$this->factData = $data;
-			} catch (Exception $e){
-				$caeData = false;
-				log_message ('ERROR', $e);
-				echo  $e;
-				throw new \Exception("Error Intento de crear CAE", 2);
-			}
-
-			return $caeData;
 		}
 }
 ?>

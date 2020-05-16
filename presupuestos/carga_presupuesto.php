@@ -67,7 +67,7 @@ for ($i=0; $i<count($codigos_a_cargar); $i++ ) {
 }
 
 if($tipo_comprobante == CAE){
-	$url = 'http://localhost/sarmiento-nuevo/index.php/afipFactuaElectronica/getCAE/'.$id_presupuesto;
+	$url = 'http://localhost/sarmiento2.0/index.php/afipFactuaElectronica/getCAE/'.$id_presupuesto;
 	$cURLConnection = curl_init();
 	curl_setopt($cURLConnection, CURLOPT_URL, $url);
 	curl_setopt($cURLConnection, CURLOPT_RETURNTRANSFER, true);

@@ -236,7 +236,7 @@ class Presupuestos extends MY_Controller {
 
 		 $crud->order_by('id_presupuesto','desc');
 
-		 $crud->columns('id_presupuesto', 'fecha', 'monto', 'descuento','id_cliente', 'tipo', 'estado', 'id_vendedor');
+		 $crud->columns('id_presupuesto', 'fecha', 'monto', 'descuento','id_cliente', 'tipo', 'id_estado', 'id_vendedor');
 
 		 $crud->display_as('id_cliente','Cliente')
 				->display_as('id_presupuesto','Número')
@@ -246,7 +246,6 @@ class Presupuestos extends MY_Controller {
 		 $crud->set_subject('remiro');
 
 		 $crud->set_relation('id_cliente','cliente','{alias} - {nombre} {apellido}');
-		 $crud->set_relation('estado','estado_presupuesto','estado');
 		 $crud->set_relation('tipo','tipo','tipo');
 		 $crud->set_relation('id_vendedor','vendedor','vendedor');
 
@@ -259,12 +258,25 @@ class Presupuestos extends MY_Controller {
 		 $crud->unset_delete();
 
 		 $crud->add_action('Detalle', '', '','icon-exit', array($this, 'buscar_presupuestos'));
+		 $crud->callback_column('fecha',array($this,'_calcularatraso'));
+		 $crud->callback_column('id_estado',array($this,'facturaIcon'));
 
 		 $output = $crud->render();
 
 		 $this->crudView($output);
 	 }
 
+	 function facturaIcon($value, $row) {
+		 $data['1'] = '<label class="label label-warning">Falta de pago</label>';
+		 $data['2'] = '<label class="label label-success">Falta de pago</label>';
+		 $data['3'] = '<label class="label label-danger">Falta de pago</label>';
+		 $data['4'] = '<label class="label label-primary">CAE</label>';
+
+		 $estado =  $data[$row->estado];
+		 $estado .= ($row->facturado == 1) ? '<i class="fa fa-file-text-o" aria-hidden="true" title="Facturado"></i>' : '';
+
+		 return  $estado;
+	 }
 
 	 function _calcularatraso($value, $row) {
 		 $fecha = date('Y-m-d', strtotime($row->fecha));

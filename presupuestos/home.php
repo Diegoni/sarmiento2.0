@@ -86,7 +86,7 @@ if($presupuestos)
 					</div>
 				</div>
 
-				<a href="<?php echo base_url()?>index.php/presupuestos/presupuesto_abm" class="small-box-footer">
+				<a href="<?php echo base_url()?>index.php/presupuestos/crud" class="small-box-footer">
 					Ver más <i class="fa fa-arrow-circle-right"></i>
 				</a>
 			</div>

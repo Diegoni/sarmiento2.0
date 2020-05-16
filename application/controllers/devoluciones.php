@@ -130,6 +130,6 @@ class Devoluciones extends My_Controller {
 
 		$this->devoluciones_model->update($registro, $id_devolucion);
 
-		redirect('/devoluciones/devoluciones_abm/','refresh');
+		redirect('/devoluciones/crud/','refresh');
 	}
 }
