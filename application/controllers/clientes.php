@@ -32,7 +32,10 @@ class Clientes extends MY_Controller {
 					'nombre',
 					'apellido',
 					'alias',
-					'cuil' );
+					'cuil',
+					'id_condicion_iva',
+					'id_tipo'
+		);
 
 		$crud->set_relation('id_estado','estado','estado');
 		$crud->set_relation('id_condicion_iva','condicion_iva','descripcion');
@@ -50,7 +53,7 @@ class Clientes extends MY_Controller {
 					'id_condicion_iva',
 					'id_tipo',
 					'comentario'
-				);
+		);
 
 		$crud->add_action('Detalle', '', '','icon-exit', array($this, 'detalle'));
 
