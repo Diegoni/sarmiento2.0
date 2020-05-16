@@ -173,14 +173,12 @@ class Presupuestos extends MY_Controller {
 		$this->setView('presupuestos/anular_presupuestos.php', $db);
 	}
 
-	/**********************************************************************************
-  **********************************************************************************
-  *
-  * 				Generar pdf
-  *
-  * ********************************************************************************
-  **********************************************************************************/
-
+	/**
+	 * Web services con la afip para la obtencion del Cae
+	 *
+	 * @param int $id_presupuesto genera el pdf para imprimir con los dato
+	 * @return pdf genera el pdf final.
+	 */
 	public function setPDF($id_presupuesto){
 		$detalle_presupuesto	= $this->renglon_presupuesto_model->getDetalle($id_presupuesto);
 		$presupuesto = $this->presupuestos_model->getRegistro($id_presupuesto);

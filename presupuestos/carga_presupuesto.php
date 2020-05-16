@@ -2,8 +2,7 @@
 include_once('conexion.php');
 //connect to your database
 const CAE = 2;
-
-
+$logsFile = "logs/".date('Y-m-d').'.log';
 $fecha		= date('Y-m-d H:i:s');
 $monto		= $_POST['total'];
 $id_cliente	= $_POST['cliente'];
@@ -32,7 +31,7 @@ $codigos_cargados = array();
 
 for ($i=0; $i<count($codigos_a_cargar); $i++ ) {
 	if(in_array($codigos_a_cargar[$i], $codigos_cargados)) {
-		$file = fopen("carga_presupuestos.log", "a");
+		$file = fopen($logsFile, "a");
 		fwrite($file, date('Y-m-d H:i:s'). "El presupuesto nro ".$id_presupuesto." esta repitiendo los codigos\n" . PHP_EOL);
 		fclose($file);
 	} else {
@@ -53,12 +52,10 @@ for ($i=0; $i<count($codigos_a_cargar); $i++ ) {
 			1
 		)";
 
-
-
 		$result = $conn->query($qstring);//query the database for entries containing the term
-		 $conn->insert_id;
+		$conn->insert_id;
 
-		 $file = fopen("carga_presupuestos.log", "a");
+		 $file = fopen($logsFile, "a");
 		 fwrite($file, date('Y-m-d H:i:s').$qstring . PHP_EOL);
 		 fwrite($file, date('Y-m-d H:i:s').$result . PHP_EOL);
 		 fwrite($file, date('Y-m-d H:i:s'). $conn->insert_id . PHP_EOL);
@@ -72,9 +69,10 @@ if($tipo_comprobante == CAE){
 	curl_setopt($cURLConnection, CURLOPT_URL, $url);
 	curl_setopt($cURLConnection, CURLOPT_RETURNTRANSFER, true);
 	$result = curl_exec($cURLConnection);
+	fwrite($file, date('Y-m-d H:i:s').$result . PHP_EOL);
 	curl_close($cURLConnection);
 } else {
 	$result = $id_presupuesto;
 }
 
-echo $id_presupuesto;
+echo $result;

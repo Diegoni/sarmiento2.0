@@ -122,23 +122,35 @@ class CAEPdf extends FPDF {
 			$this->Line(10, 71 , 200, 71);
 	}
 
+	/**
+	 * Detalle del comprobante
+	 */
 	function detail(){
 			$this->Ln($this->separation);
 			$this->SetFont('Arial','',8);
 			$this->Cell(25,$this->dataSize,"Codigo",1,0,'C');
 			$this->Cell(75,$this->dataSize,"Producto / Servicio",1,0,'C');
-			$this->Cell(15,$this->dataSize,"Cantidad",1,0,'C');
-			$this->Cell(15,$this->dataSize,"U. Medida",1,0,'C');
-			$this->Cell(30,$this->dataSize,"Precio Unit.",1,0,'C');
-			// $this->Cell(20,$this->dataSize,"% Bonif.",1,0,'C');
-			// $this->Cell(20,$this->dataSize,"Imp. Bonif.",1,0,'C');
-			$this->Cell(30,$this->dataSize,"Subtotal",1,0,'C');
+
+			// Si es A agregamos el detalle del iva
+			if($this->letra == self::LETRA_RESPONSABLE){
+				$this->Cell(10,$this->dataSize,"Cant.",1,0,'C');
+				$this->Cell(10,$this->dataSize,"U.M.",1,0,'C');
+				$this->Cell(20,$this->dataSize,"Precio Unit.",1,0,'C');
+				$this->Cell(20,$this->dataSize,"Subtotal",1,0,'C');
+				$this->Cell(10,$this->dataSize,"Iva",1,0,'C');
+				$this->Cell(20,$this->dataSize,"Subtotal Iva",1,0,'C');
+			// Si es cualquier otro sin detalle de iva
+			} else {
+				$this->Cell(15,$this->dataSize,"Cantidad",1,0,'C');
+				$this->Cell(15,$this->dataSize,"U. Medida",1,0,'C');
+				$this->Cell(30,$this->dataSize,"Precio Unit.",1,0,'C');
+				$this->Cell(30,$this->dataSize,"Subtotal",1,0,'C');
+			}
+
 			$y = $this->GetY() + 5;
 			$x = $this->GetX();
 			if($this->_renglon){
 				foreach ($this->_renglon as $renglon) {
-					$precio_unitario = round($renglon->precio / $renglon->cantidad, 2);
-
 					$this->SetXY( $x, $y  );
 					$this->Ln($this->separation);
 					$this->SetFont('Arial','',8);
@@ -146,18 +158,37 @@ class CAEPdf extends FPDF {
 					$descripcion = utf8_decode((strlen($renglon->descripcion) > 50) ? substr($renglon->descripcion, 0, 46).'...' : $renglon->descripcion);
 					$this->Cell(25,$this->dataSize, $cod_proveedor,0,0,'C');
 					$this->Cell(75,$this->dataSize, $descripcion,0,0,'L');
-					$this->Cell(15,$this->dataSize, $renglon->cantidad,0,0,'C');
-					$this->Cell(15,$this->dataSize, '',0,0,'C');
-					$this->Cell(30,$this->dataSize, $precio_unitario,0,0,'C');
-					// $this->Cell(20,$this->dataSize, 0,0,0,'C');
-					// $this->Cell(20,$this->dataSize, 0,0,0,'C');
-					$this->Cell(30,$this->dataSize, round($renglon->precio, 2),0,0,'C');
+
+					// Si es A agregamos el detalle del iva
+					if($this->letra == self::LETRA_RESPONSABLE){
+						$precio_unitario = round(($renglon->precio / $renglon->cantidad) / 1.21, 2);
+						$total_sin_iva = round($renglon->precio / 1.21, 2);
+						$total_con_iva = round($renglon->precio, 2);
+
+						$this->Cell(10,$this->dataSize, $renglon->cantidad,0,0,'C');
+						$this->Cell(10,$this->dataSize, '',0,0,'C');
+						$this->Cell(20,$this->dataSize, $precio_unitario,0,0,'C');
+						$this->Cell(20,$this->dataSize, $total_sin_iva,0,0,'C');
+						$this->Cell(10,$this->dataSize, '21%',0,0,'C');
+						$this->Cell(20,$this->dataSize, $total_con_iva,0,0,'C');
+					// Si es cualquier otro sin detalle de iva
+					} else {
+						$precio_unitario = round($renglon->precio / $renglon->cantidad, 2);
+
+						$this->Cell(15,$this->dataSize, $renglon->cantidad,0,0,'C');
+						$this->Cell(15,$this->dataSize, '',0,0,'C');
+						$this->Cell(30,$this->dataSize, $precio_unitario,0,0,'C');
+						$this->Cell(30,$this->dataSize, round($renglon->precio, 2),0,0,'C');
+					}
+
 					$y += 7;
 				}
 			}
 	}
 
-	// Pie de página
+	/**
+	 * Pie de pagina del comprobante
+	 */
 	function Footer() {
 		$comentario = ($this->_presupuesto->com_publico == 1 && $this->_presupuesto->comentario) ? 'Comentario = '.$this->_presupuesto->comentario : 'Comentario';
 			if($this->letra != self::LETRA_PRESUPUESTO){
@@ -176,6 +207,8 @@ class CAEPdf extends FPDF {
 			$this->SetFont('Arial','I',8);
 			$this->Cell(190,10,$comentario,1,0,'C');
 			$this->Ln(10 + $this->separation);
+
+			// Si no es un presupuesto buscamos el cae
 			if($this->letra != self::LETRA_PRESUPUESTO){
 				$this->Cell(190,10,"Cae: ".$this->_factura->cae,0,0,'R');
 				$this->Ln($this->dataSize);
