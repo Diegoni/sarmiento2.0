@@ -1,6 +1,5 @@
 <?php
 class CAEPdf extends FPDF {
-	const ESTADO_CAE = 4;
 	const LETRA_RESPONSABLE = 'A';
 	const LETRA_PRESUPUESTO = 'X';
 	const CBTE_TIPO_A = '1';

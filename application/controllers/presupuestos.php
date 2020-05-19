@@ -266,8 +266,8 @@ class Presupuestos extends MY_Controller {
 
 	 function facturaIcon($value, $row) {
 		 $data['1'] = '<label class="label label-warning">Falta de pago</label>';
-		 $data['2'] = '<label class="label label-success">Falta de pago</label>';
-		 $data['3'] = '<label class="label label-danger">Falta de pago</label>';
+		 $data['2'] = '<label class="label label-success">Cancelada</label>';
+		 $data['3'] = '<label class="label label-danger">Anulada</label>';
 		 $data['4'] = '<label class="label label-primary">CAE</label>';
 
 		 $estado =  $data[$row->estado];
@@ -365,32 +365,4 @@ class Presupuestos extends MY_Controller {
 				redirect('/','refresh');
 			}
 		}
-
-
-
-		/**********************************************************************************
-		 **********************************************************************************
-		 *
-		 * 				Presupuesto de Salida
-		 *
-		 * ********************************************************************************
-		 **********************************************************************************/
-			//
-			// public function search_articulo($id) {
-			// 	$query = $this->db->query("
-			// 			SELECT descripcion as value,id_articulo,precio_venta_iva FROM articulo WHERE descripcion LIKE '%".$id."%' or cod_proveedor LIKE '%".$id."%' limit 20
-			// 		");
-			//
-			// 	if($query->num_rows() > 0){
-			// 		foreach ($query->result() as $row) {
-			// 			$row['value']	= htmlentities(stripslashes($row['value']));
-			// 			$row['id']		= (int)$row['id_articulo'];
-			// 			$row['precio']	= (float)$row['precio_venta_iva'];
-			// 			$row_set[]		= $row;//build an array
-			// 		}
-			// 		echo json_encode($row_set);
-			// 	}else{
-			// 		return FALSE;
-			// 	}
-			// }
 }

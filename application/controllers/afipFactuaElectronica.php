@@ -9,6 +9,7 @@ class AfipFactuaElectronica extends My_Controller {
 
 		const COND_IVA_MONOTRIBUTISTA = 1;
 		const COND_IVA_RESP_INSC = 2;
+		const COND_EXENTO_IVA = 3;
 
 		const CONFIG_A = 1;
 		const CONFIG_B = 2;
