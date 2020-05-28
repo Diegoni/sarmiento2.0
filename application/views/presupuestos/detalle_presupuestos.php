@@ -1,13 +1,11 @@
 <script>
-	function printDiv(divName) {
-     var printContents = document.getElementById(divName).innerHTML;
-     var originalContents = document.body.innerHTML;
+function printDiv(divName) {
+   var printContents = document.getElementById(divName).innerHTML;
+   var originalContents = document.body.innerHTML;
 
-     document.body.innerHTML = printContents;
-
-     window.print();
-
-     document.body.innerHTML = originalContents;
+   document.body.innerHTML = printContents;
+   window.print();
+   document.body.innerHTML = originalContents;
 }
 </script>
 
@@ -22,52 +20,25 @@
 			<?php
 			if($presupuestos) {
 				echo "<table class='table table-hover'>";
-				foreach ($presupuestos as $row) {
-					foreach ($impresiones as $impresion) {
-	  				$dbClientes	= $this->clientes_model->getRegistro($row->id_cliente);
 
-						if ($dbClientes) {
-							foreach ($dbClientes as $row_cliente) {
-								$nombre = $row_cliente->nombre;
-								$apellido = $row_cliente->apellido;
-							}
-						}
+				$nombre =  ($cliente) ? $cliente[0]->nombre : '';
+				$apellido = ($cliente) ? $cliente[0]->apellido : '';
+				$cuit = ($cliente) ? $cliente[0]->cuil : 0;
+				$vendedor = ($vendedor) ?  $vendedor[0]->vendedor : '';
+				$cabecera = $impresiones[0]->cabecera;
 
-						$vendedor = "";
-						$dbVendedor = $this->vendedores_model->getRegistro($row->id_vendedor);
-						if ($dbVendedor) {
-						  foreach ($dbVendedor as $row_vendedor) {
-							  $vendedor = $row_vendedor->vendedor;
-						  }
-						}
+				$cabecera = str_replace("#presupuesto_nro#", $presupuestos[0]->id_presupuesto, $cabecera);
+				$cabecera = str_replace("#presupuesto_descuento#", $presupuestos[0]->descuento, $cabecera);
+				$cabecera = str_replace("#presupuesto_fecha#", date('d-m-Y', strtotime($presupuestos[0]->fecha)), $cabecera);
+				$cabecera = str_replace("#presupuesto_monto#", $presupuestos[0]->monto, $cabecera);
+        $cabecera = str_replace("#vendedor#", $vendedor, $cabecera);
+				$cabecera = str_replace("#cliente_nombre#", $nombre, $cabecera);
+				$cabecera = str_replace("#cliente_apellido#", $apellido, $cabecera);
 
-						$cabecera = $impresion->cabecera;
-						$cabecera = str_replace("#presupuesto_nro#", $row->id_presupuesto, $cabecera);
-						$cabecera = str_replace("#presupuesto_descuento#", $row->descuento, $cabecera);
-						$cabecera = str_replace("#presupuesto_fecha#", date('d-m-Y', strtotime($row->fecha)), $cabecera);
-						$cabecera = str_replace("#presupuesto_monto#", $row->monto, $cabecera);
-            $cabecera = str_replace("#vendedor#", $vendedor, $cabecera);
-						if(isset($nombre)) {
-							$cabecera = str_replace("#cliente_nombre#", $nombre, $cabecera);
-						} else{
-							$cabecera = str_replace("#cliente_nombre#", '', $cabecera);
-						}
+				$pie = $impresiones[0]->pie;
+				echo $cabecera;
 
-						if(isset($apellido))
-						{
-							$cabecera = str_replace("#cliente_apellido#", $apellido, $cabecera);
-						}
-						else
-						{
-							$cabecera = str_replace("#cliente_apellido#", '', $cabecera);
-						}
-
-						$pie = $impresion->pie;
-						echo $cabecera;
-
-						$id_presupuesto = $row->id_presupuesto;
-					}
-
+				$id_presupuesto = $presupuestos[0]->id_presupuesto;
 				echo "<hr>";
 
 				$total=0;
@@ -124,24 +95,23 @@
 
 				echo "<hr>";
 				echo $pie;
-				}
 
-				if($devoluciones)
-				{
+
+				if($devoluciones) {
 					$mensaje = $texto['si_devolucion']." <a class='btn btn-warning'>Ver devolución</a>";
 					echo setMensaje($mensaje, 'warning');
 				}
 
-				if($row->facturado == 1) {
+				if( $presupuestos[0]->facturado == 1) {
 					$letra = ($factura[0]->cbte_tipo == 1) ? 'A' : 'B';
 					echo '<a href="'.base_url().'index.php/presupuestos/setPDF/'.$id_presupuesto.'" target="_blank"><div class="well" style="color: #fff; background-color: #428bca;"><center>FACTURA '.$letra.': '.str_pad($factura[0]->cbte_desde, 8, "0", STR_PAD_LEFT).'</center></div></a>';
 				}
 
-				if($row->comentario != '') {
-					if($row->com_publico == 1) {
-						echo '<div class="well">Comentario: '.$row->comentario."</div></div>";
+				if($presupuestos[0]->comentario != '') {
+					if($presupuestos[0]->com_publico == 1) {
+						echo '<div class="well">Comentario: '. $presupuestos[0]->comentario."</div></div>";
 					} else {
-						echo '</div><div class="well">Comentario Privado: '.$row->comentario."</div>";
+						echo '</div><div class="well">Comentario Privado: '. $presupuestos[0]->comentario."</div>";
 					}
 				} else {
 					echo '</div>';
@@ -161,9 +131,9 @@
 				echo "<input type='button' class='btn btn-default' value='Volver a la lista' onclick='window.history.back()'>";
 			}
 
-  			if($row->estado != 3)
+  			if( $presupuestos[0]->estado != 3)
   			{
-					if($row->facturado != 1) {
+					if( $presupuestos[0]->facturado != 1) {
   			?>
 				<button class="btn btn-default" type="button" onclick="printDiv('printableArea')"/>
   				<i class="fa fa-print"></i> Imprimir
@@ -176,7 +146,7 @@
 					if(!$llamada)
 	  			{
 	  				// Presupuesto pendiente de pago
-		  			if($row->tipo == 2)
+		  			if( $presupuestos[0]->tipo == 2)
 		  			{
 		  			?>
 		  			<a href="<?php echo base_url().'index.php/devoluciones/generar/'.$id_presupuesto?>" class="btn btn-default"/>
@@ -190,7 +160,7 @@
 		  			}
 
 					// Presupuesto pagado
-		  			if($row->tipo == 1 && $row->facturado != 1) {
+		  			if( $presupuestos[0]->tipo == 1 &&  $presupuestos[0]->facturado != 1) {
 		  			?>
 		  				<a href="<?php echo base_url().'index.php/presupuestos/anular/'.$id_presupuesto?>" class="btn btn-default"/>
 		  					<i class="fa fa-trash-o"></i> Anular
@@ -209,8 +179,10 @@
 				}
 			}
 
-			if($row->facturado != 1){
-				echo '<button class="btn btn-default" type="button" id="btn-get-cae" value="'.$id_presupuesto.'"/>
+			if( $presupuestos[0]->facturado != 1){
+				$cuitValido = (isCuitValid($cuit)) ? 'class="btn btn-primary"' : 'class="btn btn-danger" disabled="disabled" title="El CUIT del cliente no es valido para emitir factura"';
+
+				echo '<button type="button" id="btn-get-cae" value="'.$id_presupuesto.'" '.$cuitValido.'/>
 						<i class="fa fa-cloud-upload"></i> Obtener CAE
 					</button>';
 			}

@@ -32,19 +32,19 @@ class Facturas extends My_Controller {
 		$crud->unset_edit();
 		$crud->unset_delete();
 
-		$crud->callback_column('letra', array($this,'_completarLetra'));
+		$crud->callback_column('letra', array($this,'completarLetra'));
+		$crud->callback_column('id_presupuesto', array($this,'getPresupuesto'));
 
-		$crud->add_action('Detalle', '', '','icon-exit', array($this, 'buscar_facturas'));
 		$output = $crud->render();
 		$this->crudView($output);
 	}
 
-	function _completarLetra($value, $row) {
+	function completarLetra($value, $row) {
 		return ($row->cbte_tipo == 1) ? 'A' : 'B';
 	}
 
-	function buscar_facturas($id) {
-		$factura = $this->facturas_model->getRegistro($id);
-		return site_url('/presupuestos/update').'/'.$factura[0]->id_presupuesto;
+	function getPresupuesto($value, $row) {
+		$href = base_url().'index.php/presupuestos/update/'.$row->id_presupuesto;
+		return '<a title="ver Presupuesto" class="btn btn-default btn-xs" href="'.$href.'">'.$row->id_presupuesto.'</a>';
 	}
 }

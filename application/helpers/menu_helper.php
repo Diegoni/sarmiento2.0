@@ -1,51 +1,45 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-	
-	
-	function buscarReservas(){
-		$CI =& get_instance();
-		$CI->load->model('reservas_model');
-		$CI->load->model('estados_reserva_model');
-						
-		$db['cant_reservas']=$CI->reservas_model->getCantNuevas();
-		
-		if($db['cant_reservas']>0){
-			$db['reservas']=$CI->reservas_model->getNuevas();
-			$db['estados_reserva']=$CI->estados_reserva_model->getEstados();
-		}
-				
-		return $db;		
-	}	
-	
-	function buscarMensajes(){
-		$CI =& get_instance();
-		$CI->load->model('mensajes_model');
-		$CI->load->model('estados_mensaje_model');
-		
-		$db['cant_mensajes']=$CI->mensajes_model->getCantNuevos();
-		
-		if($db['cant_mensajes']>0){
-			$db['mensajes']=$CI->mensajes_model->getNuevos();
-			$db['estados_mensaje']=$CI->estados_mensaje_model->getEstados();
-		}
-		
-		return $db;
+function isCuitValid($value) {
+	if (!is_numeric($value)) {
+		return false;
 	}
-	
-	function getTexto(){
+
+	if (strlen($value) != 11) {
+		return false;
+	}
+
+	$prefijo = (int) substr($value, 0,2);
+	if (!in_array($prefijo, array(20,23,24,27))) {
+		return false;
+	}
+
+	$coeficiente = array(5,4,3,2,7,6,5,4,3,2);
+	$sum=0;
+	for ($i=0; $i < 10 ; $i++) {
+		$sum=$sum+($value[$i]*$coeficiente[$i]);
+	}
+
+	$resto=$sum % 11;
+	if ($value[10] != 11-$resto) {
+		return false;
+	}
+
+	return true;
+}
+
+function getTexto(){
 		$CI =& get_instance();
 		include_once('texto.php');
-		
+
 		return $texto;
-	}
-	
-	function setMensaje($mensaje, $tipo=NULL)
-	{
-		if($tipo==NULL)
-		{
+}
+
+function setMensaje($mensaje, $tipo=NULL){
+		if ($tipo==NULL) {
 			$tipo='info';
 		}
-		
+
 		$return =	"<div class='alert alert-$tipo alert-dismissible' role='alert'>
 				 		<button type='button' class='close' data-dismiss='alert'>
 					 		<span aria-hidden='true'>&times;</span><span class='sr-only'>
@@ -54,28 +48,22 @@
 					 	</button>
 				  		$mensaje
 					</div>";
-		
+
 		return $return;
 	}
-	
-	function getRealIP() {
-		if (!empty($_SERVER['HTTP_CLIENT_IP'])){		
-			$ip=$_SERVER['HTTP_CLIENT_IP'];				
-		}
 
-		
-		if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])){				
-			$ip=$_SERVER['HTTP_X_FORWARDED_FOR'];			
-		}
-		
-		if (!empty($_SERVER['REMOTE_ADDR'])){
-			$ip=$_SERVER['REMOTE_ADDR'];
-		}
-		
-		return $ip;
+function getRealIP() {
+	if (!empty($_SERVER['HTTP_CLIENT_IP'])){
+		$ip=$_SERVER['HTTP_CLIENT_IP'];
 	}
-	
-	
-	
-	
 
+	if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])){
+		$ip=$_SERVER['HTTP_X_FORWARDED_FOR'];
+	}
+
+	if (!empty($_SERVER['REMOTE_ADDR'])){
+		$ip=$_SERVER['REMOTE_ADDR'];
+	}
+
+	return $ip;
+}

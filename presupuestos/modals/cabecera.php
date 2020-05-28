@@ -54,7 +54,7 @@
                <input class="data_cliente form-control" disabled type="text" id="domicilio_cliente" value=""/>
            </div>
            <div class="form-group cont_rotulo_cliente col-md-3">
-               <label for="email" class="col-sm-2 control-label">Cuil/Cuit</label>
+               <label for="cuit_cliente" class="col-sm-2 control-label">Cuil/Cuit</label>
                <input class="data_cliente form-control" type="text" disabled id="cuit_cliente" value=""/>
            </div>
            <input type="hidden" type="text"  id="pertmite_cta_cte" value="0"/>

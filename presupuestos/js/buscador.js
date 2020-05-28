@@ -228,8 +228,12 @@ $(function() {
 					$("#tipo_comprobante").val(COMPROBANTE_PRESUPUESTO);
 					$("#carga_cliente").focus();
 					alert('Por favor antes, cargue cliente');
-				}else{
-						$("#cont_boton").text('CARGAR PRESUPUESTO - CAE');
+				} else if(! validarCuit($("#cuit_cliente").val())) {
+					$("#tipo_comprobante").val(COMPROBANTE_PRESUPUESTO);
+					$("#carga_cliente").focus();
+					alert('El CUIT del cliente no es valido para emitir factura');
+				} else {
+					$("#cont_boton").text('CARGAR PRESUPUESTO - CAE');
 				}
 			}
 		});
@@ -493,4 +497,35 @@ function descuento()
 		$('#descuento').prop( "disabled", true);
 		$('#descuento').val(0);
 	}
+}
+
+/*---------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
+
+		Valida si el cuit es valido
+
+-----------------------------------------------------------------------------------
+---------------------------------------------------------------------------------*/
+
+function validarCuit(cuit) {
+    if(cuit.length != 11) {
+        return false;
+    }
+
+    var acumulado   = 0;
+    var digitos     = cuit.split("");
+    var digito      = digitos.pop();
+
+    for(var i = 0; i < digitos.length; i++) {
+        acumulado += digitos[9 - i] * (2 + (i % 6));
+    }
+
+    var verif = 11 - (acumulado % 11);
+    if(verif == 11) {
+        verif = 0;
+    } else if(verif == 10) {
+        verif = 9;
+    }
+
+    return digito == verif;
 }

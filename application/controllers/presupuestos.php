@@ -352,6 +352,8 @@ class Presupuestos extends MY_Controller {
 
 				$db['texto']				= getTexto();
 				$db['presupuestos']			= $this->presupuestos_model->getRegistro($id);
+				$db['cliente']			= ($db['presupuestos'][0]) ? $this->clientes_model->getRegistro($db['presupuestos'][0]->id_cliente) : false;
+				$db['vendedor']			= ($db['presupuestos'][0]) ? $this->vendedores_model->getRegistro($db['presupuestos'][0]->id_vendedor) : false;
 				$db['detalle_presupuesto']	= $this->renglon_presupuesto_model->getDetalle($id);
 				$db['interes_presupuesto']	= $this->intereses_model->getInteres($id);
 				$db['impresiones']			= $this->config_impresion_model->getRegistro(2);

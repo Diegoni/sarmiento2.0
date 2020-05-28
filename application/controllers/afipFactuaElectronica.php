@@ -3,6 +3,7 @@ class AfipFactuaElectronica extends My_Controller {
 		private $empresa;
 		private $afipConfig;
 		private $factData;
+		private $cliente;
 
 		const ESTADO_CONTADO = 1;
 		const ESTADO_FALTA_PAGO = 2;
@@ -36,13 +37,14 @@ class AfipFactuaElectronica extends My_Controller {
 		public function getCAE($id_presupuesto = NULL) {
 			$presupuesto = ($id_presupuesto != NULL) ? $this->presupuestos_model->getBusqueda(['id_presupuesto' => $id_presupuesto] ) : json_decode($_POST['presupuesto']);
 			$cliente = $this->clientes_model->getCliente($presupuesto[0]->id_cliente);
+			$this->cliente = $cliente[0];
 
 			$configAfipFactura = ($cliente[0]->id_condicion_iva == self::COND_IVA_RESP_INSC) ? self::CONFIG_A : self::CONFIG_B;
 			$afip = $this->afip_model->getRegistro($configAfipFactura);
 			$this->afipConfig = $afip[0];
 
 			if ($presupuesto[0]->estado == self::ESTADO_CONTADO || $presupuesto[0]->estado == self::ESTADO_FALTA_PAGO){
-				$caeData = $this->setSoap($presupuesto);
+				$caeData = $this->setSoap($presupuesto, $cliente[0]);
 				if ($caeData) {
 						$this->setCae($caeData, $presupuesto[0]->id_presupuesto);
 						echo json_encode($caeData);
@@ -77,7 +79,7 @@ class AfipFactuaElectronica extends My_Controller {
 				'CbteTipo' 		=> $this->afipConfig->tipo_comprobante, // Tipo de comprobante (ver tipos disponibles)
 				'Concepto' 		=> $this->afipConfig->concepto, // Concepto del Comprobante: (1)Productos, (2)Servicios, (3)Productos y Servicios
 				'DocTipo' 		=> 80, // Tipo de documento del comprador (ver tipos disponibles)
-				'DocNro' 			=> 20111111112, // Numero de documento del comprador
+				'DocNro' 			=> $this->cliente->cuil, // Numero de documento del comprador
 				'CbteDesde' 	=> $this->afipConfig->cbte_desde, // Numero de comprobante o numero del primer comprobante en caso de ser mas de uno
 				'CbteHasta' 	=> $this->afipConfig->cbte_hasta, // Numero de comprobante o numero del ultimo comprobante en caso de ser mas de uno
 				'CbteFch' 		=> intval(date('Ymd')), // (Opcional) Fecha del comprobante (yyyymmdd) o fecha actual si es nulo
