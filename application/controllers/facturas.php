@@ -11,40 +11,13 @@ class Facturas extends My_Controller {
 		$this->load->helper('url');
 		$this->load->library('grocery_CRUD');
 	}
-
-
-	public function crud() {
-		$crud = new grocery_CRUD();
-		$crud->set_table('factura');
-		$crud->order_by('id_factura','desc');
-		$crud->columns('letra', 'cbte_desde', 'id_presupuesto', 'imp_total', 'cbte_fch', 'cae');
-		$crud->display_as('cbte_desde','Factura')
-			 ->display_as('id_presupuesto','Presupuesto')
-			 ->display_as('imp_total','Importe')
-			 ->display_as('cbte_fch','Fecha');
-		$crud->set_subject('factura');
-
-		$_COOKIE['tabla']='factura';
-		$_COOKIE['id']='id_factura';
-
-		$crud->unset_read();
-		$crud->unset_add();
-		$crud->unset_edit();
-		$crud->unset_delete();
-
-		$crud->callback_column('letra', array($this,'completarLetra'));
-		$crud->callback_column('id_presupuesto', array($this,'getPresupuesto'));
-
-		$output = $crud->render();
-		$this->crudView($output);
-	}
-
-	function completarLetra($value, $row) {
-		return ($row->cbte_tipo == 1) ? 'A' : 'B';
-	}
-
-	function getPresupuesto($value, $row) {
-		$href = base_url().'index.php/presupuestos/update/'.$row->id_presupuesto;
-		return '<a title="ver Presupuesto" class="btn btn-default btn-xs" href="'.$href.'">'.$row->id_presupuesto.'</a>';
+	function crud(){
+		$fecha_actual = date("d-m-Y");
+		$db['desde'] = empty($this->input->post('desde')) ? date("d-m-Y",strtotime($fecha_actual."- 7 days")) : $this->input->post('desde');
+		$db['hasta'] = empty($this->input->post('hasta')) ? date("d-m-Y",strtotime($fecha_actual)) : $this->input->post('hasta');
+		$db['numero_factura'] = $this->input->post('numero_factura');
+		$db['cliente'] = $this->input->post('cliente');
+		$db['facturas'] = $this->facturas_model->getFacturaDetalle($db['desde'], $db['hasta'], $db['numero_factura'], $db['cliente']);
+		$this->setView('facturas/detalle', $db);
 	}
 }

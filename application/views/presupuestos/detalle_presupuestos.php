@@ -143,11 +143,9 @@ function printDiv(divName) {
 					<i class="fa fa-file-pdf-o"></i> PDF
 				</a>
 				<?php
-					if(!$llamada)
-	  			{
+					if (!$llamada) {
 	  				// Presupuesto pendiente de pago
-		  			if( $presupuestos[0]->tipo == 2)
-		  			{
+		  			if( $presupuestos[0]->tipo == 2) {
 		  			?>
 		  			<a href="<?php echo base_url().'index.php/devoluciones/generar/'.$id_presupuesto?>" class="btn btn-default"/>
 		  				<i class="fa fa-thumbs-down"></i> Devolución
