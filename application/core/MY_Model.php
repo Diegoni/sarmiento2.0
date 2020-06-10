@@ -164,7 +164,7 @@ class MY_Model extends CI_Model {
 		);
 	}
 
-	private function getQuery($sql) {
+	public function getQuery($sql) {
 		$query = $this->db->query($sql);
 		if($query->num_rows() > 0) {
 			foreach ($query->result() as $row) {

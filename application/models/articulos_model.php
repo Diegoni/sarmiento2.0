@@ -70,7 +70,7 @@ class Articulos_model extends MY_Model {
 			INNER JOIN
 				proveedor ON(articulo.id_proveedor=proveedor.id_proveedor)
 			WHERE
-				articulo.id_articulo = $id"
+				articulo.id_articulo = $id";
 			$this->updatePrecios($this->getQuery($sql), $variacion);
 	}
 

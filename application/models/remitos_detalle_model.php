@@ -49,7 +49,7 @@ class Remitos_detalle_model extends MY_Model {
 						devolucion.id_devolucion";
 		}
 
-		return $this->getQuery($sql)
+		return $this->getQuery($sql);
 	}
 }
 ?>

@@ -22,7 +22,7 @@ class Remitos_model extends MY_Model {
 			WHERE
 				remito.id_remito = '$id'";
 
-		return $this->getQuery($sql)
+		return $this->getQuery($sql);
 	}
 
 
@@ -31,7 +31,7 @@ class Remitos_model extends MY_Model {
 			$inicio	= date('Y-m', strtotime($inicio));
 			$final	= date('Y-m', strtotime($final));
 
-			$consulta = "
+			$sql = "
 				SELECT
 					monto,
 					fecha
@@ -44,7 +44,7 @@ class Remitos_model extends MY_Model {
 			$inicio	= date('Y-m-d', strtotime($inicio));
 			$final	= date('Y-m-d', strtotime($final));
 
-			$consulta = "
+			$sql = "
 				SELECT
 					id_remito,
 					monto,
@@ -62,7 +62,8 @@ class Remitos_model extends MY_Model {
 					DATE_FORMAT(fecha, '%Y-%m-%d') >= '$inicio' AND
 					DATE_FORMAT(fecha, '%Y-%m-%d') <= '$final'";
 		}
-		return $this->getQuery($sql)
+
+		return $this->getQuery($sql);
 	}
 
 	function getCliente($id) {
@@ -76,7 +77,7 @@ class Remitos_model extends MY_Model {
 			ORDER BY
 				id_remito DESC";
 
-		return $this->getQuery($sql)
+		return $this->getQuery($sql);
 	}
 }
 ?>
