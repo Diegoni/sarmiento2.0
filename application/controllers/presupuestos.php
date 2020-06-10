@@ -23,6 +23,7 @@ class Presupuestos extends MY_Controller {
 		$this->load->model('subcategorias_model');
 		$this->load->model('renglon_presupuesto_model');
 		$this->load->model('vendedores_model');
+		$this->load->model('config_model');
 
 		$this->load->library('grocery_CRUD');
 	}
@@ -180,7 +181,6 @@ class Presupuestos extends MY_Controller {
 	 * @return pdf genera el pdf final.
 	 */
 	public function setPDF($id_presupuesto){
-		$detalle_presupuesto	= $this->renglon_presupuesto_model->getDetalle($id_presupuesto);
 		$presupuesto = $this->presupuestos_model->getRegistro($id_presupuesto);
 		$presupuesto = $presupuesto[0];
 		$rengloPresupuesto = $this->renglon_presupuesto_model->getDetalle($id_presupuesto);
@@ -220,13 +220,7 @@ class Presupuestos extends MY_Controller {
 
 
 	 public function crud() {
-		 $query = $this->db->query("SELECT dias_pago FROM config WHERE id_config = 1 ");
-
-		 if($query->num_rows() > 0) {
-			 foreach ($query->result() as $fila) {
-				 $this->diasPago = $fila->dias_pago;
-			 }
-		 }
+		 $this->diasPago = $this->config_model->getConfig('dias_pago');
 
 		 $crud = new grocery_CRUD();
 
@@ -366,5 +360,8 @@ class Presupuestos extends MY_Controller {
 			}else{
 				redirect('/','refresh');
 			}
+		}
+
+		public function getTicket($id_presupuesto){
 		}
 }

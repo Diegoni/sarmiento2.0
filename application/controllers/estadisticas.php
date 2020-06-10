@@ -9,6 +9,7 @@ class Estadisticas extends My_Controller {
 			$this->load->model('devoluciones_model');
       $this->load->model('anulaciones_model');
       $this->load->model('vendedores_model');
+			$this->load->model('config_model');
 
     	$this->load->library('grocery_CRUD');
 		}
@@ -24,17 +25,9 @@ class Estadisticas extends My_Controller {
 
 
 	function verMas() {
-		$query = $this->db->query("SELECT cantidad FROM config WHERE id_config = 1 ");
-
-  		if($query->num_rows() > 0) {
-  			foreach ($query->result() as $fila) {
-  				$cantidad = $fila->cantidad;
-  			}
-  		}
-
-  		$db['articulos']	= $this->presupuestos_model->get_top($this->input->post('inicio'), $this->input->post('fin'), $cantidad);
-
-			$this->setView('estadisticas/get_top_cien.php', $db);
+		$cantidad = $this->config_model->getConfig('cantidad');
+		$db['articulos']	= $this->presupuestos_model->get_top($this->input->post('inicio'), $this->input->post('fin'), $cantidad);
+		$this->setView('estadisticas/get_top_cien.php', $db);
 	}
 
 

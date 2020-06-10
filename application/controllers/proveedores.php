@@ -98,10 +98,10 @@ public function actualizar_precios($datos, $id) {
 						'margen'				=> $margen,
 						'impuesto'				=> $impuesto
 						);
-			$this->articulos_model->update_Articulo($datos, $id_articulo);
+			$this->articulos_model->update($datos, $id_articulo);
 
 		}
-		
+
 		return true;
 	}
 }

@@ -2,7 +2,6 @@
 class Facturas_model extends MY_Model {
 
 	public function __construct(){
-
 		parent::construct(
 				'factura',
 				'id_factura',
@@ -19,16 +18,7 @@ class Facturas_model extends MY_Model {
 				`factura`
 			WHERE
 				factura.id_presupuesto= ".$id_presupuesto;
-
-		$query = $this->db->query($sql);
-		if($query->num_rows() > 0) {
-			foreach ($query->result() as $row){
-				$data[] = $row;
-			}
-			return $data;
-		} else {
-			return FALSE;
-		}
+		return $this->getQuery($sql);
 	}
 
 	public function getFacturaDetalle($desde, $hasta, $numero_factura = NULL, $cliente = NULL){
@@ -65,15 +55,7 @@ class Facturas_model extends MY_Model {
 
 		$sql .= " ORDER BY factura.cbte_fch, factura.cbte_tipo, factura.cbte_desde ";
 
-		$query = $this->db->query($sql);
-		if($query->num_rows() > 0) {
-			foreach ($query->result() as $row){
-				$data[] = $row;
-			}
-			return $data;
-		} else {
-			return FALSE;
-		}
+		return $this->getQuery($sql);
 	}
 }
 ?>

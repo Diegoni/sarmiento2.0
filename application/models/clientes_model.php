@@ -2,7 +2,6 @@
 class Clientes_model extends My_Model {
 
 	public function __construct(){
-
 		parent::construct(
 				'cliente',
 				'id_cliente',
@@ -22,15 +21,7 @@ class Clientes_model extends My_Model {
 			WHERE
 				cliente.id_cliente = ".$id_cliente;
 
-		$query = $this->db->query($sql);
-		if($query->num_rows() > 0) {
-			foreach ($query->result() as $row){
-				$data[] = $row;
-			}
-			return $data;
-		} else {
-			return FALSE;
-		}
+		return $this->getQuery($sql);
 	}
 
 	function getSumas($tipo){
@@ -60,14 +51,7 @@ class Clientes_model extends My_Model {
 
 		$query = $this->db->query($sql);
 
-		if($query->num_rows() > 0) {
-			foreach ($query->result() as $row){
-				$data[] = $row;
-			}
-			return $data;
-		} else {
-			return FALSE;
-		}
+		return $this->getQuery($sql);
 	}
 }
 ?>

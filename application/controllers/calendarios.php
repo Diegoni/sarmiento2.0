@@ -5,6 +5,7 @@ class Calendarios extends My_Controller {
 	public function __construct() {
 		parent::__construct();
 		$this->load->model('calendarios_model');
+		$this->load->model('colors_model');
 		$this->load->library('grocery_CRUD');
 	}
 
@@ -54,14 +55,14 @@ class Calendarios extends My_Controller {
 	}
 
 	function _setcolor($value, $row) {
-		$query = $this->db->query("SELECT backgroundColor FROM color INNER JOIN calendario ON (color.id_color = calendario.id_color) WHERE id_calendario = '$row->id_calendario' ");
+		$calendarios = $this->colors_model->getColorsCalendario($row->id_calendario);
 
-		if($query->num_rows() > 0) {
-			foreach ($query->result() as $fila) {
-				$backgroundColor = $fila->backgroundColor;
+		if($calendarios) {
+			foreach ($calendarios as $calendario) {
+				$backgroundColor = $calendario->backgroundColor;
 			}
 		}
-
+		
 		return '<p style="background: #'.$backgroundColor.'; color: #fff;font-size: .75em;padding: 0 1px;border-radius:3px">'.$row->title.'</p>';
 	}
 }

@@ -1,8 +1,6 @@
 <?php
-Class Usuarios_model extends CI_Model
-{
- function login($username, $password)
- {
+Class Usuarios_model extends CI_Model {
+ function login($username, $password) {
    $this -> db -> select('id_usuario, descripcion, pass');
    $this -> db -> from('usuario');
    $this -> db -> where('descripcion', $username);
