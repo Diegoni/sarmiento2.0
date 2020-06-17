@@ -71,6 +71,7 @@ if($tipo_comprobante == CAE){
 	$result = curl_exec($cURLConnection);
 	fwrite($file, date('Y-m-d H:i:s').$result . PHP_EOL);
 	curl_close($cURLConnection);
+	$result = $id_presupuesto;
 } else {
 	$result = $id_presupuesto;
 }

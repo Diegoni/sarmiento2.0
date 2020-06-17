@@ -59,16 +59,14 @@ class Presupuestos extends MY_Controller {
  **********************************************************************************/
 
 	public function search_articulo($id) {
-		$query = $this->db->query("
-				SELECT descripcion as value,id_articulo,precio_venta_iva FROM articulo WHERE descripcion LIKE '%".$id."%' or cod_proveedor LIKE '%".$id."%' limit 20
-			");
+		$articulos= $this->anulaciones_model->getArticulo($id);
 
-		if ($query->num_rows() > 0) {
-			foreach ($query->result() as $row) {
-				$row['value']	= htmlentities(stripslashes($row['value']));
-				$row['id']		= (int)$row['id_articulo'];
-				$row['precio']	= (float)$row['precio_venta_iva'];
-				$row_set[]		= $row;//build an array
+		if ($articulos) {
+			foreach ($articulos as $row) {
+				$row['value']	= htmlentities(stripslashes($row->value));
+				$row['id'] = (int) $row->id_articulo;
+				$row['precio'] = (float)$row->precio_venta_iva;
+				$row_set[] = $row;//build an array
 			}
 			echo json_encode($row_set);
 		} else {
@@ -87,7 +85,7 @@ class Presupuestos extends MY_Controller {
 		$remitos		= $this->remitos_model->getRemito($id_remito);
 
 		foreach ($remitos as $row) {
-			$total		= $row->monto;
+			$total = $row->monto;
 			$devoluciones	= $this->devoluciones_model->getCliente($row->id_cliente);
 		}
 
@@ -133,8 +131,6 @@ class Presupuestos extends MY_Controller {
 		}
 	}
 
-
-
  /**********************************************************************************
  **********************************************************************************
  *
@@ -169,7 +165,6 @@ class Presupuestos extends MY_Controller {
 		$db['detalle_presupuesto']	= $this->renglon_presupuesto_model->getDetalle($id);
 		$db['impresiones']			= $this->config_impresion_model->getRegistro(2);
 		$db['devoluciones']			= $this->devoluciones_model->getBusqueda($condicion);
-
 
 		$this->setView('presupuestos/anular_presupuestos.php', $db);
 	}
@@ -208,8 +203,6 @@ class Presupuestos extends MY_Controller {
 		$pdf->Output();
 	}
 
-
-
 	/**********************************************************************************
 	**********************************************************************************
 	*
@@ -218,16 +211,13 @@ class Presupuestos extends MY_Controller {
 	* ********************************************************************************
 	**********************************************************************************/
 
-
 	 public function crud() {
 		 $this->diasPago = $this->config_model->getConfig('dias_pago');
 
 		 $crud = new grocery_CRUD();
 
 		 $crud->set_table('presupuesto');
-
 		 $crud->order_by('id_presupuesto','desc');
-
 		 $crud->columns('id_presupuesto', 'fecha', 'monto', 'descuento','id_cliente', 'tipo', 'id_estado', 'id_vendedor');
 
 		 $crud->display_as('id_cliente','Cliente')
@@ -286,11 +276,9 @@ class Presupuestos extends MY_Controller {
 		 }
 	 }
 
-
 	 function buscar_presupuestos($id) {
 		 return site_url('/presupuestos/update').'/'.$id;
 	 }
-
 
 	 /**********************************************************************************
 	 **********************************************************************************
@@ -299,42 +287,28 @@ class Presupuestos extends MY_Controller {
 	 *
 	 * ********************************************************************************
 	 **********************************************************************************/
-
-
 		function update($id, $llamada = NULL) {
 			$_presupuesto = $this->presupuestos_model->getRegistro($id);
-			if($_presupuesto){
-				if($this->input->post('interes_tipo')){
+			if ($_presupuesto) {
+				if ($this->input->post('interes_tipo')) {
 
-					foreach ($_presupuesto as $_row) {
-						$presupuesto_monto = $_row->monto;
-					}
-
-					if($this->input->post('interes_tipo') == 'porcentaje'){
-						$interes_monto = $presupuesto_monto * $this->input->post('interse_monto') / 100 ;
-					}else{
-						$interes_monto = $this->input->post('interse_monto');
-					}
-
-					if($this->input->post('descripcion_monto') == ""){
-						$descripcion = date('d-m-Y').' Intereses generados por atraso';
-					}else{
-						$descripcion = date('d-m-Y').' '.$this->input->post('descripcion_monto');
-					}
+					$presupuesto_monto = $_presupuesto[0]->monto;
+					$interes_monto = ($this->input->post('interes_tipo') == 'porcentaje') ? $presupuesto_monto * $this->input->post('interse_monto') / 100 : $this->input->post('interse_monto');
+					$descripcion = ($this->input->post('descripcion_monto') == "") ? date('d-m-Y').' Intereses generados por atraso' : date('d-m-Y').' '.$this->input->post('descripcion_monto');
 
 					$interes = array(
-						'id_presupuesto'	=> $id,
-						'id_tipo'			=> 1,
-						'monto'				=> $interes_monto,
-						'descripcion'		=> $descripcion,
-						'fecha'				=> date('Y-m-d H:i:s'),
-						'id_usuario'		=> 1, //agregar nombre de usuario
+						'id_presupuesto' => $id,
+						'id_tipo' => 1,
+						'monto' => $interes_monto,
+						'descripcion' => $descripcion,
+						'fecha'	=> date('Y-m-d H:i:s'),
+						'id_usuario' => 1, //agregar nombre de usuario
 					);
 
 					$this->intereses_model->insert($interes);
 
 					$_presupuesto = array(
-						'monto'				=> $presupuesto_monto + $interes_monto,
+						'monto' => $presupuesto_monto + $interes_monto,
 					);
 
 					$this->presupuestos_model->update($_presupuesto, $id);
@@ -362,6 +336,28 @@ class Presupuestos extends MY_Controller {
 			}
 		}
 
-		public function getTicket($id_presupuesto){
+		public function setTicket($id_presupuesto){
+			$presupuesto = $this->presupuestos_model->getRegistro($id_presupuesto);
+			$presupuesto = $presupuesto[0];
+			$rengloPresupuesto = $this->renglon_presupuesto_model->getDetalle($id_presupuesto);
+
+			if($presupuesto->facturado == 1){
+				$factura = $this->facturas_model->getBusqueda(['id_presupuesto' => $id_presupuesto]);
+				$factura = $factura[0];
+				$vendedores = false;
+			} else {
+				$factura = false;
+				$vendedores = $this->vendedores_model->getRegistros();
+			}
+			$cliente = $this->clientes_model->getCliente($presupuesto->id_cliente);
+			$cliente = $cliente[0];
+
+			$empresa = $this->empresas_model->getRegistros(1);
+			$empresa = $empresa[0];
+
+			$fpdf = $this->load->library('/fpdf/fpdf');
+			$caePdf = $this->load->library('/fpdf/TicketPdf');
+			$pdf = new TicketPdf();
+			$pdf->setValues($presupuesto, $rengloPresupuesto, $cliente, $empresa, $factura, $vendedores);
 		}
 }

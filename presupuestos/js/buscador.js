@@ -133,9 +133,17 @@ function fin_presupuesto() {
 		}
   }).done( function( data ) {
 		alert('Se genero el presupuesto nro: '+data);
+		abrirNuevoTab(data);
 	});
 
 	location.reload();
+}
+
+function abrirNuevoTab(id_presupuesto) {
+	var url = 'http://'+window.location.hostname+'/sarmiento2.0/index.php/presupuestos/setTicket/'+id_presupuesto;
+  var win = window.open(url, '_blank');
+  // Cambiar el foco al nuevo tab (punto opcional)
+	win.focus();
 }
 
 

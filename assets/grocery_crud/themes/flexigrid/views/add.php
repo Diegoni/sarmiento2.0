@@ -1,6 +1,5 @@
 <?php
-
-	$this->set_css($this->default_theme_path.'/flexigrid/css/flexigrid.css');
+	//$this->set_css($this->default_theme_path.'/flexigrid/css/flexigrid.css');
 	$this->set_js_lib($this->default_theme_path.'/flexigrid/js/jquery.form.js');
 	$this->set_js_config($this->default_theme_path.'/flexigrid/js/flexigrid-add.js');
 
@@ -47,8 +46,8 @@
 				?>
 			<!-- End of hidden inputs -->
 			<?php if ($is_ajax) { ?><input type="hidden" name="is_ajax" value="true" /><?php }?>
-			
-			
+
+
 			<div id='report-error' class='report-div error'></div>
 			<div id='report-success' class='report-div success'></div>
 		<div class="row">
@@ -58,7 +57,7 @@
 			<input type='button' value='<?php echo $this->l('form_save_and_go_back'); ?>' class='btn btn-default' id="save-and-go-back-button"/>
 			<input type='button' value='<?php echo $this->l('form_cancel'); ?>' class='btn btn-default' id="cancel-button" />
 <?php }else{ ?>
-			<input type='button' onclick="window.history.back()" value="Volver" class='btn btn-default'/>			
+			<input type='button' onclick="window.history.back()" value="Volver" class='btn btn-default'/>
 <?php } ?>
 			<div class='small-loading' id='FormLoading'><?php echo $this->l('form_insert_loading'); ?></div>
 			<div class='clear'></div>

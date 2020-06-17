@@ -50,7 +50,23 @@ class Articulos_model extends MY_Model {
 		return $this->getQuery($sql);
 	}
 
-	private function updateWhitPrice($id, $variacion){
+	public function getArticulo($data){
+		$sql = "
+			SELECT
+				descripcion as value,
+				id_articulo,
+				precio_venta_iva
+			FROM
+				articulo
+			WHERE
+				descripcion LIKE '%".$data."%' OR
+				cod_proveedor LIKE '%".$data."%'
+			LIMIT
+				20";
+			return $this->getQuery($sql);
+	}
+
+	public function updateWhitPrice($id, $variacion){
 		$sql = "
 			SELECT
 					articulo.id_articulo,

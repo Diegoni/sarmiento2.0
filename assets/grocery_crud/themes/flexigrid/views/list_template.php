@@ -1,5 +1,5 @@
 <?php
-	$this->set_css($this->default_theme_path.'/flexigrid/css/flexigrid.css');
+	//$this->set_css($this->default_theme_path.'/flexigrid/css/flexigrid.css');
 	$this->set_js_lib($this->default_javascript_path.'/'.grocery_CRUD::JQUERY);
 
 	$this->set_js_lib($this->default_javascript_path.'/jquery_plugins/jquery.noty.js');
@@ -99,8 +99,8 @@ if($success_message !== null){?>
 		<?php echo $list_view?>
 	</div>
 	<?php echo form_open( $ajax_list_url, 'method="post" id="filtering_form" class="filtering_form" autocomplete = "off" data-ajax-list-info-url="'.$ajax_list_info_url.'"'); ?>
-	
-	
+
+
 	<div class="row">
 		<div class="col-md-12">
 			<div class="form-group">
@@ -126,13 +126,13 @@ if($success_message !== null){?>
 						<i class="fa fa-caret-left"></i>
 					</div>
 				</div>
-	
-				
+
+
 					<span class="pcontrol"><?php echo $this->l('list_page'); ?> <input name='page' type="text" value="1" size="4" id='crud_page' class="crud_page">
 					<?php echo $this->l('list_paging_of'); ?>
 					<span id='last-page-number' class="last-page-number"><?php echo ceil($total_results / $default_per_page)?></span></span>
-				
-	
+
+
 				<div class="btn-group">
 					<div class="pNext pButton next-button btn btn-default" >
 						<i class="fa fa-caret-right"></i>
@@ -165,9 +165,9 @@ if($success_message !== null){?>
 	<div class="row">
 		<div class="col-md-12" align="center">
 		<button class="show_hide btn btn-default pull-left"><span class="icon-search"></span></button>
-		
+
 		<div class="slidingDiv pull-left" style="padding-left: 10px;">
-		
+
 			<?php echo $this->l('list_search');?>: <input type="text" class="qsbsearch_fieldox search_text" name="search_text" size="30" id='search_text'>
 			<select name="search_field" id="search_field">
 				<option value=""><?php echo $this->l('list_search_all');?></option>
