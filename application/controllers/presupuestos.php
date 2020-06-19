@@ -344,11 +344,10 @@ class Presupuestos extends MY_Controller {
 			if($presupuesto->facturado == 1){
 				$factura = $this->facturas_model->getBusqueda(['id_presupuesto' => $id_presupuesto]);
 				$factura = $factura[0];
-				$vendedores = false;
 			} else {
 				$factura = false;
-				$vendedores = $this->vendedores_model->getRegistros();
 			}
+			$vendedores = $this->vendedores_model->getRegistro($presupuesto->id_vendedor);
 			$cliente = $this->clientes_model->getCliente($presupuesto->id_cliente);
 			$cliente = $cliente[0];
 
@@ -358,6 +357,6 @@ class Presupuestos extends MY_Controller {
 			$fpdf = $this->load->library('/fpdf/fpdf');
 			$caePdf = $this->load->library('/fpdf/TicketPdf');
 			$pdf = new TicketPdf();
-			$pdf->setValues($presupuesto, $rengloPresupuesto, $cliente, $empresa, $factura, $vendedores);
+			$pdf->setValues($presupuesto, $rengloPresupuesto, $cliente, $empresa, $factura, $vendedores[0]->vendedor);
 		}
 }

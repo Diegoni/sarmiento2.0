@@ -18,9 +18,13 @@ function printDiv(divName) {
 
 			<div id="printableArea">
 			<?php
-			if($presupuestos) {
-				echo "<table class='table table-hover'>";
+      $estadosPresupuesto = [
+        '1' => 'warning',
+        '2' => 'success',
+        '3' => 'danger',
+      ];
 
+			if($presupuestos) {
 				$nombre =  ($cliente) ? $cliente[0]->nombre : '';
 				$apellido = ($cliente) ? $cliente[0]->apellido : '';
 				$cuit = ($cliente) ? $cliente[0]->cuil : 0;
@@ -36,67 +40,62 @@ function printDiv(divName) {
 				$cabecera = str_replace("#cliente_apellido#", $apellido, $cabecera);
 
 				$pie = $impresiones[0]->pie;
-				echo $cabecera;
-
 				$id_presupuesto = $presupuestos[0]->id_presupuesto;
-				echo "<hr>";
+        $cabecera = "<table class='table table-hover'>".$cabecera."<hr>";
 
-				$total=0;
+				$total = 0;
+        $table = '';
 
-				echo "<table class='table table-hover'>";
-				echo "<tr>";
-					echo "<th>".$texto['articulo']."</th>";
-					echo "<th>Descripción</th>";
-					echo "<th>".$texto['cantidad']."</th>";
-					echo "<th>".$texto['monto']."</th>";
-					echo "<th>".$texto['total']."</th>";
-				echo "</tr>";
+				$table .= "<table class='table table-hover'>";
+				$table .= "<tr>";
+				$table .= "<th>".$texto['articulo']."</th>";
+				$table .= "<th>Descripción</th>";
+				$table .= "<th>".$texto['cantidad']."</th>";
+				$table .= "<th>".$texto['monto']."</th>";
+				$table .= "<th>".$texto['total']."</th>";
+				$table .= "</tr>";
 
-				if($detalle_presupuesto)
-				{
+				if($detalle_presupuesto) {
 					foreach ($detalle_presupuesto as $row_detalle) {
-						echo "<tr>";
-							echo "<td><a title='ver Articulo' class='btn btn-default btn-xs' href='".base_url()."index.php/articulos/articulo_abm/read/".$row_detalle->id_articulo."'>".$row_detalle->cod_proveedor."</a></td>";
-							echo "<td>".$row_detalle->descripcion."</td>";
-							echo "<td>".$row_detalle->cantidad."</td>";
-							if($row_detalle->cantidad > 0){
-								$precio = $row_detalle->precio/$row_detalle->cantidad;
-							} else {
-								$precio = 0;
-							}
-							echo "<td>$ ".round($precio, 2)."</td>";
-							$sub_total = $row_detalle->cantidad * $precio;
-							$total = $total + $sub_total;
-							echo "<td>$ ".round($sub_total,2)."</td>";
-						echo "</tr>";
+            $precio = ($row_detalle->cantidad > 0) ? $row_detalle->precio/$row_detalle->cantidad : 0;
+            $sub_total = $row_detalle->cantidad * $precio;
+            $total = $total + $sub_total;
+
+						$table .= "<tr>";
+						$table .= "<td><a title='ver Articulo' class='btn btn-default btn-xs' href='".base_url()."index.php/articulos/articulo_abm/read/".$row_detalle->id_articulo."'>".$row_detalle->cod_proveedor."</a></td>";
+						$table .= "<td>".$row_detalle->descripcion."</td>";
+						$table .= "<td>".$row_detalle->cantidad."</td>";
+            $table .= "<td>$ ".round($precio, 2)."</td>";
+						$table .= "<td>$ ".round($sub_total,2)."</td>";
+						$table .= "</tr>";
 					}
 				}
 
-				if($interes_presupuesto)
-				{
+				if($interes_presupuesto) {
 					foreach ($interes_presupuesto as $row_interes) {
-						echo "<tr>";
-							echo "<td>-</td>";
-							echo "<td>".$row_interes->descripcion."</td>";
-							echo "<td>-</td>";
-							echo "<td>-</td>";
-							$total = $total + $row_interes->monto;
-							echo "<td>".$row_interes->monto."</td>";
-						echo "</tr>";
+            $total = $total + $row_interes->monto;
+
+						$table .= "<tr>";
+						$table .= "<td>-</td>";
+						$table .= "<td>".$row_interes->descripcion."</td>";
+						$table .= "<td>-</td>";
+						$table .= "<td>-</td>";
+						$table .= "<td>".$row_interes->monto."</td>";
+						$table .= "</tr>";
 					}
 				}
 
-				echo "<tr class='success'>";
-					echo "<td colspan='4'>".$texto['total']."</td>";
-					echo "<th>$ ".round($total,2)."</th>";
-				echo "</tr>";
+				$table .= "<tr class='".$estadosPresupuesto[$presupuestos[0]->estado]."'>";
+				$table .= "<td colspan='4'>".$texto['total']."</td>";
+				$table .= "<th>$ ".round($total,2)."</th>";
+				$table .= "</tr>";
+        $table .= "</table>";
+        $table .= "<hr>";
 
-				echo "</table>";
-
-				echo "<hr>";
+        echo $cabecera;
+        echo $table;
 				echo $pie;
-
-
+        
 				if($devoluciones) {
 					$mensaje = $texto['si_devolucion']." <a class='btn btn-warning'>Ver devolución</a>";
 					echo setMensaje($mensaje, 'warning');
@@ -116,57 +115,58 @@ function printDiv(divName) {
 				} else {
 					echo '</div>';
 				}
-
-
-			}
-			else
-			{
+			} else {
 				echo setMensaje($texto['no_registro'], 'success');
 				echo '</div>';
 			}
 
+      // BOTONES FINALES
+      $arrayButtons = [];
 
-			if(!$llamada)
-			{
-				echo "<input type='button' class='btn btn-default' value='Volver a la lista' onclick='window.history.back()'>";
+			if(!$llamada) {
+				$arrayButtons[] = "<input type='button' class='btn btn-default' value='Volver a la lista' onclick='window.history.back()'>";
 			}
 
-  			if( $presupuestos[0]->estado != 3)
-  			{
-					if( $presupuestos[0]->facturado != 1) {
-  			?>
-				<button class="btn btn-default" type="button" onclick="printDiv('printableArea')"/>
-  				<i class="fa fa-print"></i> Imprimir
-				</button>
-				<?php } ?>
-				<a href="<?php echo base_url().'index.php/presupuestos/setPDF/'.$id_presupuesto?>" class="btn btn-default" target="_blank"/>
-					<i class="fa fa-file-pdf-o"></i> PDF
-				</a>
-				<?php
+      // PRESUPUESTO NO ANULADO
+			if( $presupuestos[0]->estado != 3) {
+          // Dropdown con las opciones de imprimir
+          $printButton = '<div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fa fa-print"></i> Imprimir <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" style="top: auto !important; bottom: 100% !important; margin-bottom: 1px;">
+          ';
+
+          // Si no esta facturado damos opcion de imprimir
+          if( $presupuestos[0]->facturado != 1) {
+            $printButton .= "<li><a href='#' onclick=\"printDiv('printableArea')\"><i class='fa fa-print'></i> Imprimir</a></li>";
+          }
+
+          $printButton .= "<li><a href='". base_url()."index.php/presupuestos/setPDF/".$id_presupuesto."' target='_blank'><i class='fa fa-file-pdf-o'></i> PDF</a></li>";
+          $printButton .= "<li><a href='". base_url()."index.php/presupuestos/setTicket/".$id_presupuesto."' target='_blank'><i class='fa fa-ticket'></i> Ticket</a></li>";
+          $printButton .= "</ul></div>";
+          $arrayButtons[] = $printButton;
+
+          // Presupuesto pendiente de pago
 					if (!$llamada) {
-	  				// Presupuesto pendiente de pago
-		  			if( $presupuestos[0]->tipo == 2) {
-		  			?>
-		  			<a href="<?php echo base_url().'index.php/devoluciones/generar/'.$id_presupuesto?>" class="btn btn-default"/>
-		  				<i class="fa fa-thumbs-down"></i> Devolución
-		  			</a>
+	  				if( $presupuestos[0]->tipo == 2) {
+              $arrayButtons[] = '<a href="'.base_url().'index.php/devoluciones/generar/'.$id_presupuesto.'" class="btn btn-default"/><i class="fa fa-thumbs-down"></i> Devolución</a>';
+		  			  $arrayButtons[] = '<a href="'.base_url().'index.php/presupuestos/interes/'.$id_presupuesto.'" class="btn btn-default" data-toggle="modal" data-target="#interesModal"/><i class="fa fa-angle-up"></i> Interes</a>';
+            }
 
-		  			<a href="<?php echo base_url().'index.php/presupuestos/interes/'.$id_presupuesto?>" class="btn btn-default" data-toggle="modal" data-target="#interesModal"/>
-		  				<i class="fa fa-angle-up"></i> Interes
-		  			</a>
-		  			<?php
-		  			}
-
-					// Presupuesto pagado
+            // Presupuesto pagado
 		  			if( $presupuestos[0]->tipo == 1 &&  $presupuestos[0]->facturado != 1) {
-		  			?>
-		  				<a href="<?php echo base_url().'index.php/presupuestos/anular/'.$id_presupuesto?>" class="btn btn-default"/>
-		  					<i class="fa fa-trash-o"></i> Anular
-		  				</a>
-		  			<?php
+              $arrayButtons[] = '<a href="'.base_url().'index.php/presupuestos/anular/'.$id_presupuesto.'" class="btn btn-default"/><i class="fa fa-trash-o"></i> Anular</a>';
 		  			}
-				}
-			} else {
+          }
+
+          // Si no esta facturado, opcion de obtener CAE
+          if( $presupuestos[0]->facturado != 1){
+            $cuitValido = (isCuitValid($cuit)) ? 'class="btn btn-primary"' : 'class="btn btn-danger" disabled="disabled" title="El CUIT del cliente no es valido para emitir factura"';
+            $arrayButtons[] = '<button type="button" id="btn-get-cae" value="'.$id_presupuesto.'" '.$cuitValido.'/><i class="fa fa-cloud-upload"></i> Obtener CAE</button>';
+          }
+      } else {
+        // Presupuesto Anulado
 				if($anulaciones){
 					foreach ($anulaciones as $row_a){
 						$mensaje  = "Nota de la anulación: ".$row_a->nota."<br>";
@@ -177,19 +177,13 @@ function printDiv(divName) {
 				}
 			}
 
-			if( $presupuestos[0]->facturado != 1){
-				$cuitValido = (isCuitValid($cuit)) ? 'class="btn btn-primary"' : 'class="btn btn-danger" disabled="disabled" title="El CUIT del cliente no es valido para emitir factura"';
-
-				echo '<button type="button" id="btn-get-cae" value="'.$id_presupuesto.'" '.$cuitValido.'/>
-						<i class="fa fa-cloud-upload"></i> Obtener CAE
-					</button>';
-			}
+      // Mostramos los botones dependiendo del estado del presupuesto
+      foreach ($arrayButtons as $button) {
+        echo $button;
+      }
 			?>
-
 		</div>
-
 	</div>
-
 </div>
 </div>
 </body>
@@ -244,3 +238,8 @@ function printDiv(divName) {
 </div>
 
 <script src="<?php echo base_url().'librerias/afip/js/main.js'?>"></script>
+<style>
+.btn{
+  margin-right: 5px
+}
+</style>
