@@ -13,6 +13,12 @@ class TicketPdf extends FPDF {
 	protected $longLine = 50;
 	protected $longTotal = 12;
 
+	private $condicionPago = [
+		'1' => 'Contado',
+		'2' => 'Cuenta Corriente',
+		'3' => 'Tarjeta',
+	];
+
 	public function __construct() {
 		parent::__construct(
 			'P','mm', [48, 210]
@@ -26,20 +32,24 @@ class TicketPdf extends FPDF {
 			$divLine .= '-';
 		}
 
-		$datosEmpresa = [
-			'',
-			'C.U.I.T.: '.$empresa->cuit,
-			'INGRESOS BRUTOS: '.$empresa->ingreso_brutos,
-			'TELEFONO: '.$empresa->telefono,
-			'DIRECCION: '.$empresa->domicilio,
-			'C.P.: '.$empresa->codigo_postal.' - '.$empresa->departamento.' - '.$empresa->provincia,
-			'DEFENSA AL CONSUMIDOR: 0800-222-6678',
-			'INICIO DE ACTIVIDADES: '.date("d-m-Y", strtotime($empresa->inicio_actividad)),
-			'IVA: '.$empresa->iva,
-			$divLine
-		];
+		// DATOS de la empresa
+		$datosEmpresa[] = '';
 
-		if($presupuesto->facturado == 1){
+		if ($presupuesto->facturado == 1) {
+			$datosEmpresa[] = 'C.U.I.T.: '.$empresa->cuit;
+			$datosEmpresa[] = 'INGRESOS BRUTOS: '.$empresa->ingreso_brutos;
+			$datosEmpresa[] = 'DEFENSA AL CONSUMIDOR: 0800-222-6678';
+			$datosEmpresa[] = 'INICIO DE ACTIVIDADES: '.date("d-m-Y", strtotime($empresa->inicio_actividad));
+			$datosEmpresa[] = 'IVA: '.$empresa->iva;
+		}
+
+		$datosEmpresa[] = 'TELEFONO: '.$empresa->telefono;
+		$datosEmpresa[] = 'DIRECCION: '.$empresa->domicilio;
+		$datosEmpresa[] = 'C.P.: '.$empresa->codigo_postal.' - '.$empresa->departamento.' - '.$empresa->provincia;
+		$datosEmpresa[] = $divLine;
+
+		// DATOS de la factura
+		if ($presupuesto->facturado == 1) {
 			$letra = ($factura->cbte_tipo == self::CBTE_TIPO_A) ? 'A' : 'B';
 			$nroFactura = str_pad($factura->pto_vta, 4, "0", STR_PAD_LEFT).'-'.str_pad($factura->cbte_desde, 8, "0", STR_PAD_LEFT);
 			$datosFactura = [
@@ -50,20 +60,23 @@ class TicketPdf extends FPDF {
 			];
 		}
 
+		$datosCliente = [
+			'CLIENTE: '.strtoupper($cliente->alias),
+		];
+
+		if ($presupuesto->facturado == 1) {
+			$datosCliente[] = 'C.U.I.T.: '.$cliente->cuil;
+			$datosCliente[] = 'IVA: '.($cliente->descripcion ? $cliente->descripcion : '-');
+			$datosCliente[] = 'DIRECCION: '.($cliente->direccion ? $cliente->direccion : '-');
+			$datosCliente[] = $divLine;
+		}
+
 		if($presupuesto->descuento > 0){
 			$datosExtra[] = 'DESCUENTO: '.$presupuesto->descuento.'%';
 		}
 		$datosExtra[] = 'VENDEDOR: '.$vendedor;
+		$datosExtra[] = "CONDICION VENTA: ".$this->condicionPago[$presupuesto->tipo];
 		$datosExtra[] = $divLine;
-
-		// TODO: Falta terminar
-		$datosCliente = [
-			strtoupper($cliente->alias),
-			'C.U.I.T.: '.$cliente->cuil,
-			'IVA RESPONSABLE INSCRIPTO',
-			'ZAMARBIDE 1305 - ENTRE LAS CALLES LAS VIRGE',
-			$divLine
-		];
 
 		$datosCabecera = [
 			'   CANT/PRECIO                 IVA',
@@ -74,10 +87,12 @@ class TicketPdf extends FPDF {
 		$this->SetFont('Arial','B',8);
 		$this->setY(2);
 		$this->setX($this->setX);
-		$this->Cell($this->w, $this->textypos, $empresa->empresa);
+		$this->Cell($this->w, $this->textypos, '        '.strtoupper($empresa->empresa));
 		$this->SetFont('Courier','',4);
 		$this->addLineData($datosEmpresa);
-		$this->addLineData($datosFactura);
+		if($presupuesto->facturado == 1){
+			$this->addLineData($datosFactura);
+		}
 		$this->addLineData($datosCliente);
 		$this->addLineData($datosExtra);
 		$this->addLineData($datosCabecera);
@@ -91,12 +106,12 @@ class TicketPdf extends FPDF {
 				$cantidad = $renglon->cantidad;
 
 				if(strlen($descripcion) < ($this->longLine - $this->longTotal)){
-					$descripcion = str_pad($descripcion, strlen($descripcion) - $this->longLine - $this->longTotal, " ", STR_PAD_RIGHT);
+					$descripcion = str_pad($descripcion, $this->longLine - strlen($precioNeto) , " ", STR_PAD_RIGHT);
 				} else if(strlen($descripcion) > ($this->longLine - $this->longTotal)){
-					$descripcion = substr($descripcion, 0, $this->longLine - $this->longTotal);
+					$precioNeto = '   '.$precioNeto;
+					$descripcion = substr($descripcion, 0, $this->longLine - strlen($precioNeto));
 				}
 
-				$precioNeto = str_pad($precioNeto, $this->longTotal, " ", STR_PAD_LEFT);
 				$cantidad = str_pad($cantidad, 6, " ", STR_PAD_LEFT	);
 				$precio = str_pad($precio, 20, " ", STR_PAD_RIGHT);
 
@@ -107,6 +122,19 @@ class TicketPdf extends FPDF {
 				$this->addLineData($datosDetalle);
 			}
 		}
+
+		$precio = "$ ".number_format($presupuesto->monto,2,",",".");
+		$descripcion = str_pad('TOTAL', $this->longLine - strlen($precio), " ", STR_PAD_RIGHT);
+
+		$datosDetalle = [
+			'',
+			$descripcion.$precio,
+			''
+		];
+		$this->SetFont('Courier','B',4);
+		$this->addLineData($datosDetalle);
+		$this->SetFont('Arial','',3);
+		$this->addLineData(['                                              GRACIAS POR TU COMPRA ']);
 		// $textypos=$off;
 		//
 		// $this->setX(2);
@@ -119,7 +147,7 @@ class TicketPdf extends FPDF {
 		// $this->setX(2);
 		// $this->SetFont('Arial','',5);
 		// $textypos+=$nextLineSize;
-		// $this->Cell(5,$textypos,'GRACIAS POR TU COMPRA ');
+		// $this->Cell(5,$textypos,);
 
 		$this->output();
 	}
