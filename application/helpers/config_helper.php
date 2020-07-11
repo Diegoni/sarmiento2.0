@@ -12,3 +12,10 @@ abstract class FORMAS_PAGO {
 	const CTA_CTE = 2;
 	const TARJETA = 3;
 }
+
+abstract class COMPROBANTES {
+	const MANUAL = 1;
+	const PRESUPUESTO = 2;
+	const DEVOLUCION = 3;
+	const ANULACION = 4;
+}

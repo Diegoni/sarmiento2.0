@@ -21,6 +21,7 @@ class Presupuestos extends MY_Controller {
 		$this->load->model('remitos_model');
 		$this->load->model('remitos_detalle_model');
 		$this->load->model('subcategorias_model');
+		$this->load->model('stock_model');
 		$this->load->model('renglon_presupuesto_model');
 		$this->load->model('vendedores_model');
 		$this->load->model('config_model');
@@ -153,6 +154,18 @@ class Presupuestos extends MY_Controller {
 				'estado' => ESTADO_PRESUPUESTO::ANULADA
 			);
 			$this->presupuestos_model->update($presupuesto, $registro['id_presupuesto']);
+
+			$detalle = $this->renglon_presupuesto_model->getDetalle($this->input->post('id_presupuesto'));
+
+			foreach ($detalle as $rowDetalle) {
+				$registro = [
+					'id_comprobante' 	=> COMPROBANTES::ANULACION,
+					'nro_comprobante'	=> $this->input->post('id_presupuesto'),
+					'id_articulo'			=> $rowDetalle->id_articulo,
+					'cantidad'				=> $rowDetalle->cantidad,
+				];
+				$this->stock_model->updateStock($registro);
+			}
 			redirect('presupuestos/crud/success/','refresh');
 		}
 

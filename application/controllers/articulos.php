@@ -213,7 +213,7 @@ class Articulos extends My_Controller {
 			);
 
 			$db['articulos']	= $this->articulos_model->getArticulos_variacion($datos);
-			$db['mensaje']		= "Cantidad de articulos a actualizar: ".count($db['articulos']);
+			$db['mensaje']		= ($db['articulos']) ? "Cantidad de articulos a actualizar: ".count($db['articulos']) : "No existen articulos";
 			$db['class']			= "hide";
 
 			if($this->input->post('confirmar')) {

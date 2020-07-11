@@ -18,6 +18,7 @@ class Devoluciones extends My_Controller {
 		$this->load->model('remitos_detalle_model');
 		$this->load->model('renglon_presupuesto_model');
 		$this->load->model('config_impresion_model');
+		$this->load->model('stock_model');
 
 		$this->load->library('grocery_CRUD');
 	}
@@ -99,29 +100,34 @@ class Devoluciones extends My_Controller {
 		$id_devolucion = $this->devoluciones_model->insert($registro);
 
 		$monto_devolucion = 0;
-		foreach ($detalle_presupuesto as $row)
-		{
-			if($this->input->post($row->id_renglon) > 0)
-			{
+		foreach ($detalle_presupuesto as $row) {
+			if($this->input->post($row->id_renglon) > 0) {
 				$precio = $row->precio / $row->cantidad;
 				$monto = $this->input->post($row->id_renglon) * $precio;
 
-				$registro = array(
-					'id_devolucion'		=> $id_devolucion,
+				$registro = [
+					'id_devolucion'	=> $id_devolucion,
 					'id_articulo'		=> $row->id_articulo,
 					'cantidad'			=> $this->input->post($row->id_renglon),
-					'monto'				=> $monto
-				);
+					'monto'					=> $monto
+				];
 
 				$monto_devolucion = $monto_devolucion + $monto;
-
 				$this->devoluciones_detalle_model->insert($registro);
 
-				$registro = array(
+				$registro = [
 					'estado'	=> 2
-				);
-
+				];
 				$this->renglon_presupuesto_model->update($registro, $row->id_renglon);
+
+				// STOCK
+				$registro = [
+					'id_comprobante' 	=> COMPROBANTES::DEVOLUCION,
+					'nro_comprobante'	=> $id_devolucion,
+					'id_articulo'			=> $row->id_articulo,
+					'cantidad'				=> $this->input->post($row->id_renglon),
+				];
+				$this->stock_model->updateStock($registro);
 			}
 		}
 		$registro = array(

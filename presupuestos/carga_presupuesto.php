@@ -35,31 +35,26 @@ for ($i=0; $i<count($codigos_a_cargar); $i++ ) {
 		fwrite($file, date('Y-m-d H:i:s'). "El presupuesto nro ".$id_presupuesto." esta repitiendo los codigos\n" . PHP_EOL);
 		fclose($file);
 	} else {
-		$qstring = "
-		INSERT INTO
-			reglon_presupuesto (
-				id_presupuesto,
-				id_articulo,
-				cantidad,
-				precio,
-				estado
-			)
-		VALUES(
-			$id_presupuesto,
-			$codigos_a_cargar[$i],
-			$cant_a_cargar[$i],
-			$precios_a_cargar[$i],
-			1
-		)";
-
+		$qstring = " INSERT INTO reglon_presupuesto ( id_presupuesto, id_articulo, cantidad, precio, estado ) VALUES( $id_presupuesto, $codigos_a_cargar[$i], $cant_a_cargar[$i], $precios_a_cargar[$i], 1)";
 		$result = $conn->query($qstring);//query the database for entries containing the term
 		$conn->insert_id;
 
-		 $file = fopen($logsFile, "a");
-		 fwrite($file, date('Y-m-d H:i:s').$qstring . PHP_EOL);
-		 fwrite($file, date('Y-m-d H:i:s').$result . PHP_EOL);
-		 fwrite($file, date('Y-m-d H:i:s'). $conn->insert_id . PHP_EOL);
-		 fclose($file);
+		// CAMBIOS EN STOCK - Actualizamos tabla articulo
+		$sqlArticulo = " UPDATE articulo SET stock = stock - $cant_a_cargar[$i] WHERE id_articulo = $codigos_a_cargar[$i] AND llevar_stock = 1;";
+		$conn->query($sqlArticulo);
+
+		// CAMBIOS EN STOCK - Actualizamos tabla stock
+		if($conn->affected_rows > 0){
+			$sqlStock = " INSERT INTO stock_renglon ( id_comprobante, nro_comprobante, id_articulo, cantidad ) VALUES ( 2, $id_presupuesto, $codigos_a_cargar[$i], -1*$cant_a_cargar[$i] )";
+			$result = $conn->query($sqlStock);
+		}
+
+		// ESCRIBIR EN ARCHIVO DE LOG
+		$file = fopen($logsFile, "a");
+		fwrite($file, date('Y-m-d H:i:s').$qstring . PHP_EOL);
+		fwrite($file, date('Y-m-d H:i:s').$result . PHP_EOL);
+		fwrite($file, date('Y-m-d H:i:s'). $conn->insert_id . PHP_EOL);
+		fclose($file);
 	}
 }
 

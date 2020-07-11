@@ -194,7 +194,7 @@ class CAEPdf extends FPDF {
 						$countLines = 0;
 						$y = $startLinesY;
 						foreach ($detailTable as $key => $value) {
-							$this->Cell($value,$this->dataSize,$key,0,0,'C');
+							$this->Cell($value,$this->dataSize,$key,1,0,'C');
 						}
 					}
 				}
@@ -207,7 +207,12 @@ class CAEPdf extends FPDF {
 	function Footer() {
 		$comentario = ($this->_presupuesto->com_publico == 1 && $this->_presupuesto->comentario) ? 'Comentario = '.$this->_presupuesto->comentario : 'Comentario';
 			if($this->letra != self::LETRA_PRESUPUESTO){
-				$txt = ($this->letra == self::LETRA_RESPONSABLE) ? "Subtotal: $ ".round($this->_presupuesto->monto / 1.21, 2) : '';
+				if ($this->letra == self::LETRA_RESPONSABLE){
+					$txt = "Subtotal: $ ".round($this->_presupuesto->monto / 1.21, 2);
+					$txt .= "\n IVA 21%: $ ".round($this->_presupuesto->monto - ($this->_presupuesto->monto / 1.21), 2);
+				} else {
+					$txt = '';
+				}
 				$txt .= "\nImporte otros tributos: $ 0.00";
 				$txt .= "\nImporte total: $ ".round($this->_presupuesto->monto, 2);
 			} else {
