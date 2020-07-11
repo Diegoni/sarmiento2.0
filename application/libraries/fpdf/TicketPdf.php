@@ -5,13 +5,14 @@ class TicketPdf extends FPDF {
 	const CBTE_TIPO_A = '1';
 	const CBTE_TIPO_B = '6';
 
-	protected $w = 2;
-	protected $textypos = 2;
-	protected $nextLineSize = 4;
+	protected $w = 4;
+	protected $textypos = 4;
+	protected $nextLineSize = 6;
 	protected $setX = 2;
 	protected $addNextLine = 0;
-	protected $longLine = 50;
+	protected $longLine = 40;
 	protected $longTotal = 12;
+	protected $fontSize = 8;
 
 	private $condicionPago = [
 		'1' => 'Contado',
@@ -21,7 +22,7 @@ class TicketPdf extends FPDF {
 
 	public function __construct() {
 		parent::__construct(
-			'P','mm', [48, 210]
+			'P','mm', [80, 400]
 		);
 	}
 
@@ -78,17 +79,28 @@ class TicketPdf extends FPDF {
 		$datosExtra[] = "CONDICION VENTA: ".$this->condicionPago[$presupuesto->tipo];
 		$datosExtra[] = $divLine;
 
+		$charLongPrice = 3 + strlen('CANT/PRECIO') + strlen('IVA');
+		$spacePrice = '';
+		for ($i=0; $i < $this->longLine - $charLongPrice ; $i++) {
+			$spacePrice .= ' ';
+		}
+
+		$charLongDesc = strlen('DESCRIPCION') + strlen('PRECIO NETO');
+		$spaceDesc = '';
+		for ($i=0; $i < $this->longLine - $charLongDesc ; $i++) {
+			$spaceDesc .= ' ';
+		}
 		$datosCabecera = [
-			'   CANT/PRECIO                 IVA',
-			'DESCRIPCION                            PRECIO NETO',
+			'   '.'CANT/PRECIO'.$spacePrice.'IVA',
+			'DESCRIPCION'.$spaceDesc.'PRECIO NETO',
 		];
 
 		$this->AddPage();
-		$this->SetFont('Arial','B',8);
-		$this->setY(2);
+		$this->SetFont('Arial','B',12);
+		$this->setY(4);
 		$this->setX($this->setX);
-		$this->Cell($this->w, $this->textypos, '        '.strtoupper($empresa->empresa));
-		$this->SetFont('Courier','',4);
+		$this->Cell($this->w, $this->textypos, strtoupper($empresa->empresa), 0,0, 'C');
+		$this->SetFont('Courier','',$this->fontSize);
 		$this->addLineData($datosEmpresa);
 		if($presupuesto->facturado == 1){
 			$this->addLineData($datosFactura);
@@ -97,9 +109,12 @@ class TicketPdf extends FPDF {
 		$this->addLineData($datosExtra);
 		$this->addLineData($datosCabecera);
 
-		$total =0;
+		$total = 0;
+		$countLines = 0;
 		if($rengloPresupuesto){
 			foreach ($rengloPresupuesto as $renglon) {
+				$countLines += 1;
+
 				$precio = number_format( round($renglon->precio / $renglon->cantidad, 2),2,",",".");
 				$precioNeto = number_format($renglon->precio ,2,",",".");
 				$descripcion = strtoupper($renglon->descripcion);
@@ -120,43 +135,36 @@ class TicketPdf extends FPDF {
 					$descripcion.$precioNeto,
 				];
 				$this->addLineData($datosDetalle);
+
+				if( $countLines == 30) {
+					$countLines = 0;
+					$this->AddPage();
+					$this->setY(4);
+					$this->textypos = 4;
+					$this->addLineData($datosCabecera, 'C');
+				}
 			}
 		}
 
 		$precio = "$ ".number_format($presupuesto->monto,2,",",".");
 		$descripcion = str_pad('TOTAL', $this->longLine - strlen($precio), " ", STR_PAD_RIGHT);
-
 		$datosDetalle = [
 			'',
 			$descripcion.$precio,
 			''
 		];
-		$this->SetFont('Courier','B',4);
+		$this->SetFont('Courier','B',$this->fontSize);
 		$this->addLineData($datosDetalle);
-		$this->SetFont('Arial','',3);
-		$this->addLineData(['                                              GRACIAS POR TU COMPRA ']);
-		// $textypos=$off;
-		//
-		// $this->setX(2);
-		// $this->Cell(5,$textypos, $divLine);
-		// $textypos+=$nextLineSize;
-		// $this->Cell(5,$textypos,"TOTAL: " );
-		// $this->setX(38);
-		// $this->Cell(5,$textypos,"$ ".number_format($presupuesto->monto,2,",","."),0,0,"R");
-		//
-		// $this->setX(2);
-		// $this->SetFont('Arial','',5);
-		// $textypos+=$nextLineSize;
-		// $this->Cell(5,$textypos,);
-
+		$this->SetFont('Arial','',$this->fontSize);
+		$this->addLineData(['GRACIAS POR TU COMPRA '], 'C');
 		$this->output();
 	}
 
-	function addLineData($arrayDatos){
+	function addLineData($arrayDatos, $aling = 'L'){
 		foreach ($arrayDatos as $dato) {
 			$this->textypos += $this->nextLineSize + $this->addNextLine;
 			$this->setX($this->setX);
-			$this->Cell($this->w, $this->textypos, $dato);
+			$this->Cell($this->w,$this->textypos,$dato,0,0, $aling);
 		}
 	}
 }

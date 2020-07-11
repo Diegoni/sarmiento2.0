@@ -127,29 +127,37 @@ class CAEPdf extends FPDF {
 	function detail(){
 			$this->Ln($this->separation);
 			$this->SetFont('Arial','',8);
-			$this->Cell(25,$this->dataSize,"Codigo",1,0,'C');
-			$this->Cell(75,$this->dataSize,"Producto / Servicio",1,0,'C');
+			$detailTable["Codigo"] = 25;
+			$detailTable["Producto / Servicio"] = 75;
 
 			// Si es A agregamos el detalle del iva
 			if($this->letra == self::LETRA_RESPONSABLE){
-				$this->Cell(10,$this->dataSize,"Cant.",1,0,'C');
-				$this->Cell(10,$this->dataSize,"U.M.",1,0,'C');
-				$this->Cell(20,$this->dataSize,"Precio Unit.",1,0,'C');
-				$this->Cell(20,$this->dataSize,"Subtotal",1,0,'C');
-				$this->Cell(10,$this->dataSize,"Iva",1,0,'C');
-				$this->Cell(20,$this->dataSize,"Subtotal Iva",1,0,'C');
+				$detailTable["Cant."] = 10;
+				$detailTable["U.M."] = 10;
+				$detailTable["Precio Unit."] = 20;
+				$detailTable["Subtotal"] = 20;
+				$detailTable["Iva"] = 10;
+				$detailTable["Subtotal Iva"] = 20;
+
 			// Si es cualquier otro sin detalle de iva
 			} else {
-				$this->Cell(15,$this->dataSize,"Cantidad",1,0,'C');
-				$this->Cell(15,$this->dataSize,"U. Medida",1,0,'C');
-				$this->Cell(30,$this->dataSize,"Precio Unit.",1,0,'C');
-				$this->Cell(30,$this->dataSize,"Subtotal",1,0,'C');
+				$detailTable["Cantidad"] = 15;
+				$detailTable["U. Medida"] = 15;
+				$detailTable["Precio Unit."] = 30;
+				$detailTable["Subtotal"] = 30;
 			}
 
-			$y = $this->GetY() + 5;
+			$startLinesY = $this->GetY() + 5;
 			$x = $this->GetX();
-			if($this->_renglon){
+			if ($this->_renglon) {
+				$y = $startLinesY;
+				$countLines = 0;
+				// Cabecera del detalle
+				foreach ($detailTable as $key => $value) {
+					$this->Cell($value,$this->dataSize,$key,1,0,'C');
+				}
 				foreach ($this->_renglon as $renglon) {
+					$countLines += 1;
 					$this->SetXY( $x, $y  );
 					$this->Ln($this->separation);
 					$this->SetFont('Arial','',8);
@@ -179,8 +187,16 @@ class CAEPdf extends FPDF {
 						$this->Cell(30,$this->dataSize, $precio_unitario,0,0,'C');
 						$this->Cell(30,$this->dataSize, round($renglon->precio, 2),0,0,'C');
 					}
-
 					$y += 7;
+
+					if( $countLines == 15) {
+						$this->AddPage();
+						$countLines = 0;
+						$y = $startLinesY;
+						foreach ($detailTable as $key => $value) {
+							$this->Cell($value,$this->dataSize,$key,0,0,'C');
+						}
+					}
 				}
 			}
 	}

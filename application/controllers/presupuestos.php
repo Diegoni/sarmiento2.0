@@ -319,16 +319,16 @@ class Presupuestos extends MY_Controller {
 				);
 
 				$db['texto']				= getTexto();
-				$db['presupuestos']			= $this->presupuestos_model->getRegistro($id);
+				$db['presupuestos']	= $this->presupuestos_model->getRegistro($id);
 				$db['cliente']			= ($db['presupuestos'][0]) ? $this->clientes_model->getRegistro($db['presupuestos'][0]->id_cliente) : false;
 				$db['vendedor']			= ($db['presupuestos'][0]) ? $this->vendedores_model->getRegistro($db['presupuestos'][0]->id_vendedor) : false;
 				$db['detalle_presupuesto']	= $this->renglon_presupuesto_model->getDetalle($id);
 				$db['interes_presupuesto']	= $this->intereses_model->getInteres($id);
-				$db['impresiones']			= $this->config_impresion_model->getRegistro(2);
-				$db['devoluciones']			= $this->devoluciones_model->getBusqueda($condicion);
-				$db['anulaciones']			= $this->anulaciones_model->getAnulaciones($id);
-				$db['factura']	= $this->facturas_model->getFactura($id);
-				$db['llamada'] = ($llamada == NULL) ? FALSE : TRUE;
+				$db['impresiones']	= $this->config_impresion_model->getRegistro(2);
+				$db['devoluciones']	= $this->devoluciones_model->getBusqueda($condicion);
+				$db['anulaciones']	= $this->anulaciones_model->getAnulaciones($id);
+				$db['factura']			= $this->facturas_model->getFactura($id);
+				$db['llamada'] 			= ($llamada == NULL) ? FALSE : TRUE;
 
 				$this->setView('presupuestos/detalle_presupuestos.php', $db);
 			}else{
