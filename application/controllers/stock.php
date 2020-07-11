@@ -17,7 +17,29 @@ class Stock extends My_Controller {
 		$this->setView('stock/insert', $db);
 	}
 
-	public function search_articulo() {
+	public function insertDetail() {
+		$id_articulos	= $this->input->post('codigos_art');
+		$cantidades		= $this->input->post('cantidades');
+		$comentario		= $this->input->post('comentario');
+
+		$registro = [
+			'comentario' => $comentario,
+			'date_add' => date('Y/m/d H:i:s'),
+		];
+		$id_stock = $this->stock_model->insert($registro);
+
+		for ($i=0; $i < count($id_articulos); $i++ ) {
+			$registro = [
+				'id_comprobante' 	=> COMPROBANTES::MANUAL,
+				'nro_comprobante'	=> $id_stock,
+				'id_articulo'			=> $id_articulos[$i],
+				'cantidad'				=> $cantidades[$i],
+			];
+			$this->stock_model->updateStock($registro);
+		}
+	}
+
+	public function searchArticulo() {
 		$articulos= $this->articulos_model->getArticulo($_GET['term']);
 		if ($articulos) {
 			foreach ($articulos as $rowArticulo) {

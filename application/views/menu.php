@@ -43,6 +43,8 @@
           	<li><a  href='<?php echo site_url('articulos/subcategoria_abm')?>'>Sub categoria</a></li>
           	<li class="divider"></li>
           	<li><a  href='<?php echo site_url('articulos/actualizar_precios_lote')?>'>Actualizar precios</a></li>
+						<li class="divider"></li>
+						<li><a  href='<?php echo site_url('stock/insert')?>'>Movimiento stock</a></li>
         	</ul>
         </li>
 

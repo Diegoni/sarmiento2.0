@@ -143,7 +143,10 @@ class Articulos extends My_Controller {
 						'id_proveedor',
 						'id_grupo',
 						'id_categoria',
-						'id_subcategoria');
+						'id_subcategoria',
+						'stock_minimo',
+						'stock_deseado',
+						'llevar_stock');
 		$crud->required_fields(	'cod_proveedor',
 						'descripcion',
 						'precio_costo',

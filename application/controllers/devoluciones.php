@@ -89,10 +89,10 @@ class Devoluciones extends My_Controller {
 		$session_data = $this->session->userdata('logged_in');
 
 		$registro = array(
-			'id_presupuesto'	=> $id_presupuesto,
-			'fecha'				=> date('Y/m/d H:i:s'),
+			'id_presupuesto'=> $id_presupuesto,
+			'fecha'					=> date('Y/m/d H:i:s'),
 			'a_cuenta'			=> 0,
-			'nota'				=> $this->input->post('nota'),
+			'nota'					=> $this->input->post('nota'),
 			'id_usuario'		=> $session_data['id_usuario'],
 			'id_estado'			=> 1
 		);
