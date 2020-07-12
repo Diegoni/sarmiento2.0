@@ -46,12 +46,33 @@ class Stock extends My_Controller {
 	*
 	* @return view
 	*/
-	public function stockArticulo($id_articulo, $id_comprobante = null) {
-		$db['articulo'] = $this->articulos_model->getRegistro($id_articulo);
-		$db['stock'] = $this->stock_model->totalStock($id_articulo);
-		$db['detail'] = ($id_comprobante != null) ? $this->stock_model->detailStock($id_articulo, $id_comprobante) : false;
-		$db['id_comprobante'] = $id_comprobante;
+	public function stockArticulo($id_articulo = null, $id_comprobante = null) {
+		$filter = [
+			'desde' => '',
+			'hasta' => '',
+			'nro' => '',
+			'additional' => '',
+			'filter' => false,
+		];
 
+		if ($this->input->post('filter')) {
+			$filter = [
+				'desde' => $this->input->post('filterDesde'),
+				'hasta' => $this->input->post('filterHasta'),
+				'nro' => $this->input->post('filterNro'),
+				'additional' => $this->input->post('filterAdditional'),
+				'filter' => true,
+			];
+		}
+		if ($id_articulo != null) {
+			$db['articulo'] = $this->articulos_model->getRegistro($id_articulo);
+			$db['stock'] = $this->stock_model->totalStock($id_articulo);
+			$db['detail'] = ($id_comprobante != null) ? $this->stock_model->detailStock($id_articulo, $id_comprobante, $filter) : false;
+			$db['id_comprobante'] = $id_comprobante;
+		} else {
+			$db['articulo'] = false;
+		}
+		$db['filter'] = $filter;
 		$this->setView('stock/articulo', $db);
 	}
 }

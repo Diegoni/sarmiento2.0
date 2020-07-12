@@ -43,7 +43,7 @@ $(document).ready(function() {
         </div>
         <div class="panel-body">
 					<div class="row" style="padding-bottom: 10px;">
-						<form method="post">
+					<form method="post">
 					<div class="col-md-2">
 						<div class="input-group">
 							<div class="input-group-addon"><i class="fa fa-calendar"></i></div>

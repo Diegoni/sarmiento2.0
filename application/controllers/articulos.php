@@ -168,6 +168,8 @@ class Articulos extends My_Controller {
 		$_COOKIE['tabla']='articulo';
 		$_COOKIE['id']='id_articulo';
 
+		$crud->add_action('Stock', '', '','icon-archive', array($this, 'stockArticulo'));
+
 		$crud->callback_after_insert(array($this, 'insert_log'));
 		$crud->callback_after_insert(array($this, 'actualizar_precios'));
 		$crud->callback_after_update(array($this, 'update_log'));
@@ -179,6 +181,10 @@ class Articulos extends My_Controller {
 		$output = $crud->render();
 
 		$this->crudView($output);
+	}
+
+	function stockArticulo($id) {
+		return site_url('/stock/stockArticulo').'/'.$id;
 	}
 
 	/*

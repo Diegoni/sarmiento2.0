@@ -51,67 +51,58 @@ class Stock_model extends My_Model {
 		return $this->getQuery($sql);
 	}
 
-	public function detailStock($id_articulo, $id_comprobante){
+	public function detailStock($id_articulo, $id_comprobante, $filter){
 		switch ($id_comprobante) {
 		  case COMPROBANTES::MANUAL:
-				$sql = "
-					SELECT
-						stock.id_stock as nro,
-						comentario as additional,
-						stock.date_add as fecha,
-						stock_renglon.cantidad
-					FROM
-						stock_renglon
-					INNER JOIN
-						stock ON(stock_renglon.nro_comprobante = stock.id_stock)";
+				$sqlInner = " INNER JOIN stock ON(stock_renglon.nro_comprobante = stock.id_stock) ";
+				$filtersFields = [
+					'nro' => 'stock.id_stock',
+					'additional' => 'comentario',
+					'fecha' => 'stock.date_add',
+				];
 		    break;
 		  case COMPROBANTES::PRESUPUESTO:
-			$sql = "
-				SELECT
-					presupuesto.id_presupuesto as nro,
-					cliente.alias as additional,
-					presupuesto.fecha as fecha,
-					stock_renglon.cantidad
-				FROM
-					stock_renglon
-				INNER JOIN
-					presupuesto ON(stock_renglon.nro_comprobante = presupuesto.id_presupuesto)
-				INNER JOIN
-					cliente ON(presupuesto.id_cliente = cliente.id_cliente)";
-			break;
-		    break;
+				$sqlInner = " INNER JOIN presupuesto ON(stock_renglon.nro_comprobante = presupuesto.id_presupuesto) ";
+				$sqlInner .= " INNER JOIN cliente ON(presupuesto.id_cliente = cliente.id_cliente) ";
+				$filtersFields = [
+					'nro' => 'presupuesto.id_presupuesto',
+					'additional' => 'cliente.alias',
+					'fecha' => 'presupuesto.fecha',
+				];
+				break;
 		  case COMPROBANTES::DEVOLUCION:
-				$sql = "
-					SELECT
-						devolucion.id_devolucion as nro,
-						devolucion.nota as additional,
-						devolucion.fecha as fecha,
-						stock_renglon.cantidad
-					FROM
-						stock_renglon
-					INNER JOIN
-						devolucion ON(stock_renglon.nro_comprobante = devolucion.id_devolucion)";
+				$sqlInner = " INNER JOIN devolucion ON(stock_renglon.nro_comprobante = devolucion.id_devolucion) ";
+				$filtersFields = [
+					'nro' => 'devolucion.id_devolucion',
+					'additional' => 'devolucion.nota',
+					'fecha' => 'devolucion.fecha',
+				];
 		    break;
 		  case COMPROBANTES::ANULACION:
-				$sql = "
-					SELECT
-						presupuesto.id_presupuesto as nro,
-						cliente.alias as additional,
-						presupuesto.fecha as fecha,
-						stock_renglon.cantidad
-					FROM
-						stock_renglon
-					INNER JOIN
-						presupuesto ON(stock_renglon.nro_comprobante = presupuesto.id_presupuesto)
-					INNER JOIN
-						cliente ON(presupuesto.id_cliente = cliente.id_cliente)";
-					break;
+				$sqlInner = " INNER JOIN presupuesto ON(stock_renglon.nro_comprobante = presupuesto.id_presupuesto)";
+				$sqlInner .= " INNER JOIN cliente ON(presupuesto.id_cliente = cliente.id_cliente) ";
+				$filtersFields = [
+					'nro' => 'presupuesto.id_presupuesto',
+					'additional' => 'cliente.alias',
+					'fecha' => 'presupuesto.fecha',
+				];
+				break;
 		}
-
-		$sql .= "
-		WHERE
-			stock_renglon.id_articulo = '$id_articulo' AND
-			stock_renglon.id_comprobante = '$id_comprobante'";
+		$sql = "
+			SELECT
+				$filtersFields[nro] as nro,
+				$filtersFields[additional] as additional,
+				$filtersFields[fecha] as fecha,
+				stock_renglon.cantidad
+			FROM
+				stock_renglon ";
+		$sql .= $sqlInner.' WHERE ';
+		$sql .= ($filter['desde'] != '') ? $filtersFields['fecha']." >= '".date("Y-m-d",strtotime($filter['desde']))."' AND " : "";
+		$sql .= ($filter['hasta'] != '') ? $filtersFields['fecha']." <= '".date("Y-m-d",strtotime($filter['hasta']))."' AND " : "";
+		$sql .= ($filter['nro'] != '') ? $filtersFields['nro']." = '".$filter['nro']."' AND " : "";
+		$sql .= ($filter['additional'] != '') ? $filtersFields['additional']." LIKE '%".$filter['additional']."%' AND " : "";
+		$sql .= " stock_renglon.id_articulo = '$id_articulo' AND ";
+		$sql .= " stock_renglon.id_comprobante = '$id_comprobante' ";
 
 		return $this->getQuery($sql);
 	}

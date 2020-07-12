@@ -44,7 +44,8 @@
           	<li class="divider"></li>
           	<li><a  href='<?php echo site_url('articulos/actualizar_precios_lote')?>'>Actualizar precios</a></li>
 						<li class="divider"></li>
-						<li><a  href='<?php echo site_url('stock/insert')?>'>Movimiento stock</a></li>
+						<li><a  href='<?php echo site_url('stock/insert')?>'>Hacer movimientos stock</a></li>
+						<li><a  href='<?php echo site_url('stock/stockArticulo')?>'>Articulos stock</a></li>
         	</ul>
         </li>
 
