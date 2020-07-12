@@ -50,5 +50,70 @@ class Stock_model extends My_Model {
 
 		return $this->getQuery($sql);
 	}
+
+	public function detailStock($id_articulo, $id_comprobante){
+		switch ($id_comprobante) {
+		  case COMPROBANTES::MANUAL:
+				$sql = "
+					SELECT
+						stock.id_stock as nro,
+						comentario as additional,
+						stock.date_add as fecha,
+						stock_renglon.cantidad
+					FROM
+						stock_renglon
+					INNER JOIN
+						stock ON(stock_renglon.nro_comprobante = stock.id_stock)";
+		    break;
+		  case COMPROBANTES::PRESUPUESTO:
+			$sql = "
+				SELECT
+					presupuesto.id_presupuesto as nro,
+					cliente.alias as additional,
+					presupuesto.fecha as fecha,
+					stock_renglon.cantidad
+				FROM
+					stock_renglon
+				INNER JOIN
+					presupuesto ON(stock_renglon.nro_comprobante = presupuesto.id_presupuesto)
+				INNER JOIN
+					cliente ON(presupuesto.id_cliente = cliente.id_cliente)";
+			break;
+		    break;
+		  case COMPROBANTES::DEVOLUCION:
+				$sql = "
+					SELECT
+						devolucion.id_devolucion as nro,
+						devolucion.nota as additional,
+						devolucion.fecha as fecha,
+						stock_renglon.cantidad
+					FROM
+						stock_renglon
+					INNER JOIN
+						devolucion ON(stock_renglon.nro_comprobante = devolucion.id_devolucion)";
+		    break;
+		  case COMPROBANTES::ANULACION:
+				$sql = "
+					SELECT
+						presupuesto.id_presupuesto as nro,
+						cliente.alias as additional,
+						presupuesto.fecha as fecha,
+						stock_renglon.cantidad
+					FROM
+						stock_renglon
+					INNER JOIN
+						presupuesto ON(stock_renglon.nro_comprobante = presupuesto.id_presupuesto)
+					INNER JOIN
+						cliente ON(presupuesto.id_cliente = cliente.id_cliente)";
+					break;
+		}
+
+		$sql .= "
+		WHERE
+			stock_renglon.id_articulo = '$id_articulo' AND
+			stock_renglon.id_comprobante = '$id_comprobante'";
+
+		return $this->getQuery($sql);
+	}
 }
 ?>

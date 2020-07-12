@@ -126,6 +126,58 @@ if($articulo[0]->stock >= $articulo[0]->stock_deseado){
 					echo setMensaje('No hay movimientos');
 				} ?>
 			</div>
+			<?php if($detail){
+				switch ($id_comprobante) {
+				  case COMPROBANTES::MANUAL:
+						$type = 'Manual';
+						$additional = 'Comentario';
+						$href = base_url().'index.php/stock/crud/';
+				    break;
+				  case COMPROBANTES::PRESUPUESTO:
+						$type = 'Presupuesto';
+						$additional = 'Cliente';
+						$href = base_url().'index.php/presupuestos/update/';
+				    break;
+				  case COMPROBANTES::DEVOLUCION:
+						$type = 'Devolucion';
+						$additional = 'Comentario';
+						$href = base_url().'index.php/devoluciones/crud/read/';
+				    break;
+				  case COMPROBANTES::ANULACION:
+						$type = 'Presupuesto Anulado';
+						$additional = 'Cliente';
+						$href = base_url().'index.php/presupuestos/update/';
+						break;
+				}
+			?>
+			<hr>
+			<div class="row">
+				<table id="table_detail" class="table" cellpadding="5" cellspacing="5" width="100%" style="border-collapse:collapse;">
+					<thead>
+					<tr>
+						<th>Fecha</th>
+						<th>Tipo</th>
+						<th>Nro</th>
+						<th><?php echo $additional?></th>
+						<th>Cantida</th>
+					</tr>
+					</thead>
+					<tbody>
+						<?php
+							foreach ($detail as $rowDetail) {
+								echo '<tr>';
+								echo '<td class="td-center">'.date("d-m-Y", strtotime($rowDetail->fecha)).'</td>';
+								echo '<td class="td-center">'.$type.'</td>';
+								echo '<td class="td-center"><a class="btn btn-default btn-xs" href="'.$href.$rowDetail->nro.'">'.$rowDetail->nro.'</a></td>';
+								echo '<td>'.$rowDetail->additional.'</td>';
+								echo '<td class="td-center">'.$rowDetail->cantidad.'</td>';
+								echo '</tr>';
+							}
+						?>
+					</tbody>
+				</table>
+			</div>
+			<?php } ?>
 		</div>
 	</div>
 </div>

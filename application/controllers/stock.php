@@ -46,9 +46,11 @@ class Stock extends My_Controller {
 	*
 	* @return view
 	*/
-	public function stockArticulo($id_articulo) {
+	public function stockArticulo($id_articulo, $id_comprobante = null) {
 		$db['articulo'] = $this->articulos_model->getRegistro($id_articulo);
 		$db['stock'] = $this->stock_model->totalStock($id_articulo);
+		$db['detail'] = ($id_comprobante != null) ? $this->stock_model->detailStock($id_articulo, $id_comprobante) : false;
+		$db['id_comprobante'] = $id_comprobante;
 
 		$this->setView('stock/articulo', $db);
 	}
