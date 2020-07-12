@@ -4,35 +4,53 @@
 		<div class="panel-heading">Movimientos Stock</div>
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-md-10">
+				<div class="col-md-8">
 					<div class="form-group">
 						<label class="col-sm-2 control-label">Articulo:</label>
 						<input class="form-control" type='text' placeholder="Cod o Detalle" name='articulo' value='' id='articulo'/>
 					</div>
 				</div>
 				<div class="col-md-2">
-				<div class="form-group">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">Stock:</label>
+						<input class="form-control" type='number' name='stock' id='stock' disabled/>
+					</div>
+				</div>
+				<div class="col-md-2">
+					<div class="form-group">
 						<label class="col-sm-2 control-label">Cantidad:</label>
-						<input class="form-control" type='number' name='cantidad' value='<?php echo $cantidad_inicial?>' id='cantidad'/>
-						<p><input onclick="carga(item_elegido)" type='button' id="carga_articulo" hidden="hidden"/></p>
+						<input class="form-control" type='number' name='cantidad' id='cantidad' disabled/>
+						<input onclick="carga(item_elegido)" type='button' id="carga_articulo" hidden="hidden"/>
 					</div>
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-md-9">
+				<div class="col-md-6">
 					<div class="form-group">
 						<label class="col-sm-2 control-label">Comentario:</label>
-						<textarea class="form-control" rows="3" id="comentario" name="comentario"></textarea>
+						<textarea class="form-control" rows="1" id="comentario" name="comentario"></textarea>
 					</div>
 				</div>
-				<div class="col-md-3">
+				<div class="col-md-2">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">Minimo:</label>
+						<input class="form-control" type='number' name='stock_minimo' id='stock_minimo' disabled/>
+					</div>
+				</div>
+				<div class="col-md-2">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">Deseado:</label>
+						<input class="form-control" type='number' name='stock_deseado' id='stock_deseado' disabled/>
+					</div>
+				</div>
+				<div class="col-md-2">
 					<div class="form-group">
 						<label class="col-sm-2 control-label" style="opacity: -1;">T</label>
 						<button id="cont_boton" onclick="carga_presupuesto()" hidden="true" class="btn btn-primary form-control">CARGAR STOCK</button>
 					</div>
 				</div>
 			</div>
-
+			<hr>
 			<div id="reglon_factura" class="row">
 					<span class="titulo_item_reglon col-sm-8"><b>DETALLE</b></span>
 					<span class="titulo_cant_item_reglon col-sm-2"><b>CANT</b></span>
@@ -48,27 +66,40 @@ var nuevo				= true;
 var cantidad_r	= [];
 var codigo_r		= [];
 
+
 $(function() {
 	$('#articulo').focus();
 
 	$("#articulo").autocomplete({
-	  source: "searchArticulo",
+	  source: "<?php echo base_url()?>index.php/articulos/searchArticulo",
 	  minLength: 2,//search after two characters
-	  select: function(event,ui){
-			item_elegido = ui.item;
-	    este = ui.item.id;
-			pos = items_reglon.indexOf(este);
-			$("#cantidad").removeAttr('disabled');
-			$('#cantidad').focus();
-			$('#cantidad').select();
+	  select: function(event,ui) {
+			llevar_stock = ui.item.llevar_stock;
 
-			if(pos!=-1){
-	  		nuevo=false;
-	  		//console.log("modifica:",este);
-	      cant_cargada=$('#cant_'+este).val();
-	      //console.log(cant_cargada);
-	      $('#cantidad').val(cant_cargada);
+			if(llevar_stock == 1){
+				item_elegido = ui.item;
+		    este = ui.item.id;
+				stock = ui.item.stock;
+				stock_minimo = ui.item.stock_minimo;
+				stock_deseado = ui.item.stock_deseado;
+				pos = items_reglon.indexOf(este);
+				$("#cantidad").removeAttr('disabled');
+				$('#cantidad').focus();
 				$('#cantidad').select();
+				$('#stock').val(stock);
+				$('#stock_minimo').val(stock_minimo);
+				$('#stock_deseado').val(stock_deseado);
+
+				if(pos!=-1){
+		  		nuevo=false;
+		  		//console.log("modifica:",este);
+		      cant_cargada=$('#cant_'+este).val();
+		      //console.log(cant_cargada);
+		      $('#cantidad').val(cant_cargada);
+					$('#cantidad').select();
+				}
+			} else {
+				alert('El articulo seleccionado no lleva stock');
 			}
 		},
 
@@ -126,8 +157,11 @@ function agrega_a_reglon(este,texto,cantidad,bandera) {
 
 function reset_item() {
     $("#articulo").val('');
+		$("#cantidad").val('');
+		$("#stock").val('');
+		$("#stock_minimo").val('');
+		$("#stock_deseado").val('');
     $("#articulo").focus();
-    $('#cantidad').val(1);
 }
 
 
@@ -155,8 +189,13 @@ function limpia_cli() {
 
 
 function carga_presupuesto() {
-	guarda_detalle();
-	fin_presupuesto();
+	if(items_reglon.length > 0){
+		guarda_detalle();
+		fin_presupuesto();
+	} else {
+		alert("No se han cargado elementos");
+	}
+
 }
 
 
@@ -181,10 +220,11 @@ function fin_presupuesto() {
 			cantidades:cantidad_r,
 			comentario:comentario
 		}
-  }).complete( function( data ) {
-		alert('Se genero el presupuesto nro: '+data);
+  }).success( function( data ) {
+		alert('Se guardaron correctamente los movimientos');
+		location.reload();
 	});
-	location.reload();
+
 }
 
 

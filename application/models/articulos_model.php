@@ -55,7 +55,11 @@ class Articulos_model extends MY_Model {
 			SELECT
 				descripcion as value,
 				id_articulo,
-				precio_venta_iva
+				precio_venta_iva,
+				stock,
+				stock_minimo,
+				stock_deseado,
+				llevar_stock
 			FROM
 				articulo
 			WHERE

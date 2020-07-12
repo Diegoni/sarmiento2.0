@@ -131,12 +131,13 @@ function fin_presupuesto() {
 			com_publico:com_publico,
 			tipo_comprobante: tipo_comprobante
 		}
-  }).done( function( data ) {
+  }).success( function( data ) {
 		alert('Se genero el presupuesto nro: '+data);
 		abrirNuevoTab(data);
+		location.reload();
 	});
 
-	location.reload();
+
 }
 
 function abrirNuevoTab(id_presupuesto) {

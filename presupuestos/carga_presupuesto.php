@@ -29,6 +29,9 @@ $id_presupuesto = $conn->insert_id;
 
 $codigos_cargados = array();
 
+$qstring = false;
+$result = false;
+
 for ($i=0; $i<count($codigos_a_cargar); $i++ ) {
 	if(in_array($codigos_a_cargar[$i], $codigos_cargados)) {
 		$file = fopen($logsFile, "a");
@@ -48,17 +51,16 @@ for ($i=0; $i<count($codigos_a_cargar); $i++ ) {
 			$sqlStock = " INSERT INTO stock_renglon ( id_comprobante, nro_comprobante, id_articulo, cantidad ) VALUES ( 2, $id_presupuesto, $codigos_a_cargar[$i], -1*$cant_a_cargar[$i] )";
 			$result = $conn->query($sqlStock);
 		}
-
-		// ESCRIBIR EN ARCHIVO DE LOG
-		$file = fopen($logsFile, "a");
-		fwrite($file, date('Y-m-d H:i:s').$qstring . PHP_EOL);
-		fwrite($file, date('Y-m-d H:i:s').$result . PHP_EOL);
-		fwrite($file, date('Y-m-d H:i:s'). $conn->insert_id . PHP_EOL);
-		fclose($file);
 	}
 }
 
-if($tipo_comprobante == CAE){
+// ESCRIBIR EN ARCHIVO DE LOG
+$file = fopen($logsFile, "a");
+fwrite($file, date('Y-m-d H:i:s').$qstring . PHP_EOL);
+fwrite($file, date('Y-m-d H:i:s').$result . PHP_EOL);
+fclose($file);
+
+if ($tipo_comprobante == CAE) {
 	$url = 'http://localhost/sarmiento2.0/index.php/afipFactuaElectronica/getCAE/'.$id_presupuesto;
 	$cURLConnection = curl_init();
 	curl_setopt($cURLConnection, CURLOPT_URL, $url);

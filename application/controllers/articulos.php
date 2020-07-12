@@ -234,4 +234,26 @@ class Articulos extends My_Controller {
 
 		$this->setView(['actualizar precios_lote', 'calendarios/config_actualizar'], $db);
 	}
+
+	/*
+	*
+	* @return view
+	*/
+	public function searchArticulo() {
+		$articulos= $this->articulos_model->getArticulo($_GET['term']);
+		if ($articulos) {
+			foreach ($articulos as $rowArticulo) {
+				$row['value']	= htmlentities(stripslashes($rowArticulo->value));
+				$row['id'] = (int) $rowArticulo->id_articulo;
+				$row['stock'] = (int) $rowArticulo->stock;
+				$row['stock_minimo'] = (int) $rowArticulo->stock_minimo;
+				$row['stock_deseado'] = (int) $rowArticulo->stock_deseado;
+				$row['llevar_stock'] = (int) $rowArticulo->llevar_stock;
+				$row_set[] = $row;
+			}
+			echo json_encode($row_set);
+		} else {
+			return FALSE;
+		}
+	}
 }

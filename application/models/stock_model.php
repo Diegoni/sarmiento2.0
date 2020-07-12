@@ -32,5 +32,23 @@ class Stock_model extends My_Model {
 			}
 		}
 	}
+
+	public function totalStock($id_articulo){
+		$sql = "
+			SELECT
+				stock_renglon.id_comprobante,
+				comprobante,
+				sum(cantidad) as cantidad
+			FROM
+				stock_renglon
+			INNER JOIN
+				comprobantes ON(stock_renglon.id_comprobante = comprobantes.id_comprobante)
+			WHERE
+				id_articulo = '$id_articulo'
+			GROUP BY
+				stock_renglon.id_comprobante";
+
+		return $this->getQuery($sql);
+	}
 }
 ?>

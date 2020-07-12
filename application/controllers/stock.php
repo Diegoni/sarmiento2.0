@@ -9,7 +9,7 @@ class Stock extends My_Controller {
 	}
 
 	/*
-	* CRUD CATEGORIA
+	*
 	* @return view
 	*/
 	public function insert() {
@@ -17,6 +17,10 @@ class Stock extends My_Controller {
 		$this->setView('stock/insert', $db);
 	}
 
+	/*
+	*
+	* @return view
+	*/
 	public function insertDetail() {
 		$id_articulos	= $this->input->post('codigos_art');
 		$cantidades		= $this->input->post('cantidades');
@@ -38,19 +42,14 @@ class Stock extends My_Controller {
 			$this->stock_model->updateStock($registro);
 		}
 	}
+	/*
+	*
+	* @return view
+	*/
+	public function stockArticulo($id_articulo) {
+		$db['articulo'] = $this->articulos_model->getRegistro($id_articulo);
+		$db['stock'] = $this->stock_model->totalStock($id_articulo);
 
-	public function searchArticulo() {
-		$articulos= $this->articulos_model->getArticulo($_GET['term']);
-		if ($articulos) {
-			foreach ($articulos as $rowArticulo) {
-				$row['value']	= htmlentities(stripslashes($rowArticulo->value));
-				$row['id'] = (int) $rowArticulo->id_articulo;
-				$row['precio'] = (float) $rowArticulo->precio_venta_iva;
-				$row_set[] = $row;//build an array
-			}
-			echo json_encode($row_set);
-		} else {
-			return FALSE;
-		}
+		$this->setView('stock/articulo', $db);
 	}
 }
