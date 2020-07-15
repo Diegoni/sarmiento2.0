@@ -4,6 +4,49 @@
 		<div class="panel-heading">Movimientos Stock</div>
 		<div class="panel-body">
 			<div class="row">
+				<?php
+				if ($stock) {
+					echo '<div class="col-md-12">';
+					echo '<table class="table table-striped">';
+					echo '<thead>';
+					echo '<tr>';
+					echo '<th>NRO</th>';
+					echo '<th>'.$stock[0]->id_stock.'</th>';
+					echo '<th>Fecha</th>';
+					echo '<th >'.date("d-m-Y", strtotime($stock[0]->date_add	)).'</th>';
+					echo '</tr>';
+					echo '<tr>';
+					echo '<th>Comentario</th>';
+					echo '<th colspan="3">'.$stock[0]->comentario.'</th>';
+					echo '</tr>';
+					echo '</thead>';
+					echo '</table>';
+					echo '</div>';
+
+					echo '<div class="col-md-12">';
+					echo '<table class="table table-striped">';
+					echo '<thead>';
+					echo '<tr>';
+					echo '<th>Codigo</th>';
+					echo '<th>Articulo</th>';
+					echo '<th>Movimiento</th>';
+					echo '</tr>';
+					echo '</thead>';
+					echo '<tbody>';
+					foreach ($stock_renglon as $rowStockRenglon) {
+						echo '<tr>';
+						echo '<td><a title="ver Articulo" class="btn btn-default btn-xs" href="'.base_url().'index.php/articulos/articulo_abm/edit/'.$rowStockRenglon->id_articulo.'">'.$rowStockRenglon->cod_proveedor.'</a></td>';
+						echo '<td>'.$rowStockRenglon->descripcion.'</td>';
+						echo '<td><a title="ver Stock" class="btn btn-default btn-xs" href="'.base_url().'index.php/stock/stockArticulo/'.$rowStockRenglon->id_articulo.'">'.$rowStockRenglon->cantidad.'</a></td>';
+						echo '</tr>';
+					}
+					echo '</tbody>';
+					echo '</table>';
+					echo '</div>';
+
+				} else {
+
+				?>
 				<div class="col-md-6">
 					<div class="form-group">
 						<label class="col-sm-2 control-label">Articulo:</label>
@@ -87,6 +130,7 @@
 					</div>
 				</div>
 			</div>
+		<?php } ?>
 		</div>
 	</div>
 </div>

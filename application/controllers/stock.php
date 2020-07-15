@@ -12,8 +12,15 @@ class Stock extends My_Controller {
 	*
 	* @return view
 	*/
-	public function insert() {
-		$db = true;
+	public function insert($id = NULL) {
+		if ($id != NULL) {
+			$db['stock'] = $this->stock_model->getRegistro($id);
+			$db['stock_renglon'] = $this->stock_model->getDetail($id);
+		} else {
+			$db['stock'] = false;
+			$db['stock_renglon'] = false;	
+		}
+
 		$this->setView('stock/insert', $db);
 	}
 

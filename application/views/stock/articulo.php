@@ -132,7 +132,7 @@ if ($articulo) {
 				  case COMPROBANTES::MANUAL:
 						$type = 'Manual';
 						$additional = 'Comentario';
-						$href = base_url().'index.php/stock/crud/';
+						$href = base_url().'index.php/stock/insert/';
 				    break;
 				  case COMPROBANTES::PRESUPUESTO:
 						$type = 'Presupuesto';

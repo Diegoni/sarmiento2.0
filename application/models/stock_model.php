@@ -106,5 +106,10 @@ class Stock_model extends My_Model {
 
 		return $this->getQuery($sql);
 	}
+
+	public function getDetail ($id){
+		$sql = " SELECT * FROM stock_renglon INNER JOIN articulo ON (stock_renglon.id_articulo = articulo.id_articulo) WHERE nro_comprobante = '$id' AND id_comprobante = ".COMPROBANTES::MANUAL;
+		return $this->getQuery($sql);
+	}
 }
 ?>
