@@ -61,13 +61,7 @@ class AfipFactuaElectronica extends My_Controller {
 		 * @return array Datos obtenidos en el web services.
 		 */
 		private function setSoap($presupuesto) {
-			$dataEmpresa = 	[	'cert' => 'sarmientows_4ac84b96cef5e957.crt',
-					'key' => 'privada.key',
-					'CUIT' => 30672163494,
-					'production' => TRUE
-				];
-
-			$afip = $this->load->library('/afip/Afip', $dataEmpresa);
+			$afip = $this->getAfipObjet();
 
 			$ImpTotal = round($presupuesto[0]->monto, 2);
 			$ImpNeto = round($ImpTotal / 1.21, 2);
@@ -166,6 +160,37 @@ class AfipFactuaElectronica extends My_Controller {
 			];
 
 			$this->facturas_model->insert($insertFactura);
+		}
+
+		private function getAfipObjet(){
+			$dataEmpresa = [	'cert' => 'sarmientows_4ac84b96cef5e957.crt',
+					'key' => 'privada.key',
+					'CUIT' => 30672163494,
+					'production' => TRUE
+				];
+
+				$afip = $this->load->library('/afip/Afip', $dataEmpresa);
+				$afip = new Afip( $dataEmpresa );
+				return $afip;
+		}
+
+		public function synchronizeVoucherNumbering() {
+			$afip = $this->getAfipObjet();
+			$afipConfig = $this->afip_model->getRegistros();
+			foreach ($afipConfig as $config) {
+				$lastVoucher = $afip->ElectronicBilling->GetLastVoucher($this->empresa->punto_venta, $config->tipo_comprobante);
+				if($lastVoucher != $config->cbte_hasta){
+					$update = [
+						'cbte_desde' => $lastVoucher + 1,
+						'cbte_hasta' => $lastVoucher + 1,
+					];
+
+					$this->afip_model->update($update, $config->id_afip);
+					echo 'Se actualizo numeración del comprobante tipo='.$config->tipo_comprobante.'<br>';
+				} else {
+					echo 'Numeración ok tipo='.$config->tipo_comprobante.'<br>';
+				}
+			}
 		}
 }
 ?>
