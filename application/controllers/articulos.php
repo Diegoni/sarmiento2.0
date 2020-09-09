@@ -255,11 +255,34 @@ class Articulos extends My_Controller {
 				$row['stock_minimo'] = (int) $rowArticulo->stock_minimo;
 				$row['stock_deseado'] = (int) $rowArticulo->stock_deseado;
 				$row['llevar_stock'] = (int) $rowArticulo->llevar_stock;
+				$row['cod_proveedor'] = $rowArticulo->cod_proveedor;
+				$row['precio_costo'] = (float) $rowArticulo->precio_costo;
+				$row['iva'] = (float) $rowArticulo->iva;
+				$row['impuesto'] = (float) $rowArticulo->impuesto;
+				$row['margen'] = (float) $rowArticulo->margen;
+				$row['descuento'] = (float) $rowArticulo->descuento;
+				$row['descuento2'] = (float) $rowArticulo->descuento2;
+				$row['precio_venta_iva'] = (float) $rowArticulo->precio_venta_iva;
 				$row_set[] = $row;
 			}
 			echo json_encode($row_set);
 		} else {
 			return FALSE;
 		}
+	}
+
+	public function calculatePrices() {
+		$articulo = new StdClass;
+
+		$articulo->precio_costo = $this->input->post('precio_costo');
+		$articulo->descuento = $this->input->post('descuento');
+		$articulo->descuento2 = $this->input->post('descuento2');
+		$articulo->margen = $this->input->post('margen');
+		$articulo->impuesto = $this->input->post('impuesto');
+		$articulo->iva = $this->input->post('iva');
+
+		$precio = $this->articulos_model->getRowUpdate($articulo, 0);
+
+		echo json_encode($precio);
 	}
 }

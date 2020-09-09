@@ -53,17 +53,28 @@ class Articulos_model extends MY_Model {
 	public function getArticulo($data){
 		$sql = "
 			SELECT
-				descripcion as value,
+				cod_proveedor,
+				precio_costo,
+				iva,
+				precio_venta_iva,
+				articulo.descripcion as value,
 				id_articulo,
 				precio_venta_iva,
 				stock,
 				stock_minimo,
 				stock_deseado,
-				llevar_stock
+				llevar_stock,
+				proveedor.descripcion as proveedor,
+				proveedor.descuento as descuento,
+				proveedor.descuento2 as descuento2,
+				proveedor.margen as margen,
+				proveedor.impuesto as impuesto
 			FROM
-				articulo
+				`articulo`
+			INNER JOIN
+				proveedor ON(articulo.id_proveedor=proveedor.id_proveedor)
 			WHERE
-				descripcion LIKE '%".$data."%' OR
+				articulo.descripcion LIKE '%".$data."%' OR
 				cod_proveedor LIKE '%".$data."%'
 			LIMIT
 				20";
@@ -105,7 +116,8 @@ class Articulos_model extends MY_Model {
 		}
 	}
 
-	private function getRowUpdate($articulo, $variacion){
+	public function getRowUpdate($articulo, $variacion){
+		$decimales = 4;
 		$precio_viejo	= $articulo->precio_costo;// solo para depurar
 		$precio_costo	= $articulo->precio_costo + ($articulo->precio_costo * ($variacion / 100));// FUNCIONA PARA AUMENTOS Y DECREMENTOS POR LA MULTIP(+ * + = +     Y    + * -  = - )
 		$costo_descuento1	= $precio_costo - ($precio_costo * ($articulo->descuento / 100));
@@ -121,15 +133,14 @@ class Articulos_model extends MY_Model {
 		$precio_venta_sin_iva_sin_imp	= $precio_venta_sin_iva;
 		$precio_venta_con_iva_con_imp	= $precio_venta_sin_iva_con_imp + ($precio_venta_sin_iva_sin_imp * ($articulo->iva / 100));// precio c/dto1 c/dto2 s/iva s/imp c/margen +  %iva + %imp(p)
 
-
-		$articulo_update=array(
-			'precio_costo' => $precio_costo,
-			'costo_descuento'		=> $costo_descuento,
-			'precio_venta_sin_iva' => $precio_venta_sin_iva,
-			'precio_venta_sin_iva_con_imp' => $precio_venta_sin_iva_con_imp,
-			'precio_venta_iva' => $precio_venta_con_iva_con_imp,
-			'margen' => $articulo->margen,
-			'impuesto' => $articulo->impuesto
+		$articulo_update = array(
+			'precio_costo'									=> round($precio_costo, $decimales),
+			'costo_descuento'								=> round($costo_descuento, $decimales),
+			'precio_venta_sin_iva' 					=> round($precio_venta_sin_iva, $decimales),
+			'precio_venta_sin_iva_con_imp'	=> round($precio_venta_sin_iva_con_imp, $decimales),
+			'precio_venta_iva'							=> round($precio_venta_con_iva_con_imp, $decimales),
+			'margen'												=> round($articulo->margen, $decimales),
+			'impuesto'											=> round($articulo->impuesto, $decimales),
 		);
 
 		return $articulo_update;

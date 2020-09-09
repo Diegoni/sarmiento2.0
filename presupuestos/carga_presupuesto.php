@@ -58,7 +58,6 @@ for ($i=0; $i<count($codigos_a_cargar); $i++ ) {
 $file = fopen($logsFile, "a");
 fwrite($file, date('Y-m-d H:i:s').$qstring . PHP_EOL);
 fwrite($file, date('Y-m-d H:i:s').$result . PHP_EOL);
-fclose($file);
 
 if ($tipo_comprobante == CAE) {
 	$url = 'http://localhost/sarmiento2.0/index.php/afipFactuaElectronica/getCAE/'.$id_presupuesto;
@@ -73,4 +72,5 @@ if ($tipo_comprobante == CAE) {
 	$result = $id_presupuesto;
 }
 
+fclose($file);
 echo $result;

@@ -99,8 +99,6 @@ class AfipFactuaElectronica extends My_Controller {
 				),
 			);
 
-			$afip = new Afip( $dataEmpresa );
-
 			try{
 				$caeData = $afip->ElectronicBilling->CreateVoucher($data);
 				$this->factData = $data;
@@ -179,10 +177,11 @@ class AfipFactuaElectronica extends My_Controller {
 			$afipConfig = $this->afip_model->getRegistros();
 			foreach ($afipConfig as $config) {
 				$lastVoucher = $afip->ElectronicBilling->GetLastVoucher($this->empresa->punto_venta, $config->tipo_comprobante);
+				$lastVoucher ++;
 				if($lastVoucher != $config->cbte_hasta){
 					$update = [
-						'cbte_desde' => $lastVoucher + 1,
-						'cbte_hasta' => $lastVoucher + 1,
+						'cbte_desde' => $lastVoucher,
+						'cbte_hasta' => $lastVoucher,
 					];
 
 					$this->afip_model->update($update, $config->id_afip);
