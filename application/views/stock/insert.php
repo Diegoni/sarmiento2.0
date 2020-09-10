@@ -166,9 +166,14 @@
 			</div>
 			<hr>
 			<div id="reglon_factura" class="row">
-				<div class="col-md-7">
+				<div class="col-md-6">
 					<div class="form-group">
 						<label class="col-sm-2 control-label">Detalle</label>
+					</div>
+				</div>
+				<div class="col-md-1">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">Costo</label>
 					</div>
 				</div>
 				<div class="col-md-1">
@@ -201,7 +206,7 @@ var items_reglon= [];
 var nuevo				= true;
 var cantidad_r	= [];
 var codigo_r		= [];
-
+var costos_r	= [];
 
 $(function() {
 	$('#articulo').focus();
@@ -303,24 +308,22 @@ function resetPrices(){
 }
 
 function carga(elem) {
-	cantidad = parseFloat($('#cantidad').val());
-	tipo = parseFloat($('#tipo').val());
-	stock = parseFloat($('#stock').val());
+	var cantidad = parseFloat($('#cantidad').val());
+	var tipo = parseFloat($('#tipo').val());
+	var stock = parseFloat($('#stock').val());
+	var precio_costo = parseFloat($('#precio_costo').val());
 	if($("#articulo").val().length >= 1) {
 		este = elem.id;
 		if(nuevo){
 			items_reglon.push(este);
 		}
-		agrega_a_reglon(este, elem.value, cantidad, tipo, stock, nuevo);
-		reset_item();
-		resetPrices();
-	} else {
-		reset_item();
-		resetPrices();
+		agrega_a_reglon(este, elem.value, cantidad, tipo, stock, nuevo, precio_costo);
 	}
+	reset_item();
+	resetPrices();
 }
 
-function agrega_a_reglon(este, texto, cantidad, tipo, stock, bandera) {
+function agrega_a_reglon(este, texto, cantidad, tipo, stock, bandera, precio_costo) {
 	if(bandera){
 		if (tipo == 2){
 			cantidad = cantidad - stock;
@@ -333,24 +336,24 @@ function agrega_a_reglon(este, texto, cantidad, tipo, stock, bandera) {
 		$('#reglon_factura').height(largo);
 		$('#reglon_factura').append('<div class="row">');
 		$('#reglon_factura').append('<div id="cont_borra'+este+'" class="cont_reglon_item_presup row" style="padding-left: 15px"></div>');
-		$('#cont_borra'+este).append('<span class="item_reglon col-md-7" id='+este+' >'+texto+'</span>');
-		$('#cont_borra'+este).append('<div class="col-md-1">'+stock+'</div>');
+		$('#cont_borra'+este).append('<span class="item_reglon col-md-6" id='+este+' >'+texto+'</span>');
+		$('#cont_borra'+este).append('<input class="precio_costo_reglon" id=precio_costo_'+este+' value='+precio_costo+' type="hidden">');
 		$('#cont_borra'+este).append('<input class="cant_item_reglon" id=cant_'+este+' value='+cantidad+' type="hidden">');
+		$('#cont_borra'+este).append('<div class="col-md-1">'+precio_costo+'</div>');
+		$('#cont_borra'+este).append('<div class="col-md-1">'+stock+'</div>');
 		$('#cont_borra'+este).append('<div class="col-md-1">'+cantidad+'</div>');
 		$('#cont_borra'+este).append('<div class="col-md-1">'+newStock+'</div>');
 		$('#cont_borra'+este).append('<div class="col-md-2" id=cont_botones'+este+'></div>');
 		$('#cont_botones'+este).append('<button title="Borrar linea" class="ico_borra btn btn-danger btn-xs pull-left" onclick="borra_reglon('+este+')" id="ico_borra'+este+'"></button>');
 		$('#reglon_factura').append('</div><hr class="hrLine" id="hrLine'+este+'">');
 		$('#ico_borra'+este).append('<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>');
-
-		reset_item();
-		resetPrices();
   } else {
 		$('#cant_'+este).val(cantidad);
 		nuevo = true;
-		reset_item();
-		resetPrices();
 	}
+
+	reset_item();
+	resetPrices();
 }
 
 function reset_item() {
@@ -365,6 +368,7 @@ function reset_item() {
 function carga_presupuesto() {
 	if(items_reglon.length > 0){
 		guarda_detalle();
+		guarda_costos();
 		fin_presupuesto();
 	} else {
 		alert("No se han cargado elementos");
@@ -380,6 +384,12 @@ function guarda_detalle() {
 	});
 }
 
+function guarda_costos() {
+	$('.precio_costo_reglon').each(function (index) {
+			costos_r.push(parseFloat($(this).val()));
+	});
+}
+
 function fin_presupuesto() {
 	comentario	= $("#comentario").val();
 	$.ajax({
@@ -388,7 +398,8 @@ function fin_presupuesto() {
 		data : {
 			codigos_art:codigo_r,
 			cantidades:cantidad_r,
-			comentario:comentario
+			comentario:comentario,
+			costos:costos_r
 		}
   }).success( function( data ) {
 		alert('Se guardaron correctamente los movimientos');
@@ -419,8 +430,6 @@ function calculatePrices(){
 	var descuento2 = $('#descuento2').val();
 	var margen = $('#margen').val();
 	var precio_venta_iva = $('#precio_venta_iva').val();
-
-	console.log(precio_costo);
 
 	$.ajax({
     type:"POST",

@@ -18,7 +18,7 @@ class Stock extends My_Controller {
 			$db['stock_renglon'] = $this->stock_model->getDetail($id);
 		} else {
 			$db['stock'] = false;
-			$db['stock_renglon'] = false;	
+			$db['stock_renglon'] = false;
 		}
 
 		$this->setView('stock/insert', $db);
@@ -32,6 +32,7 @@ class Stock extends My_Controller {
 		$id_articulos	= $this->input->post('codigos_art');
 		$cantidades		= $this->input->post('cantidades');
 		$comentario		= $this->input->post('comentario');
+		$costos		= $this->input->post('costos');
 
 		$registro = [
 			'comentario' => $comentario,
@@ -47,6 +48,7 @@ class Stock extends My_Controller {
 				'cantidad'				=> $cantidades[$i],
 			];
 			$this->stock_model->updateStock($registro);
+			$this->articulos_model->updateByCosto($id_articulos[$i], $costos[$i]);
 		}
 	}
 	/*

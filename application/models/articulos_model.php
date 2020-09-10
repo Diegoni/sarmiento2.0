@@ -82,27 +82,14 @@ class Articulos_model extends MY_Model {
 	}
 
 	public function updateWhitPrice($id, $variacion){
-		$sql = "
-			SELECT
-					articulo.id_articulo,
-					articulo.cod_proveedor,
-					articulo.descripcion as descripcion,
-					articulo.precio_costo,
-					articulo.precio_venta_iva,
-					articulo.precio_venta_sin_iva,
-					articulo.iva as iva,
-					proveedor.descripcion as proveedor,
-					proveedor.descuento as descuento,
-					proveedor.descuento2 as descuento2,
-					proveedor.margen as margen,
-					proveedor.impuesto as impuesto
-			FROM
-				`articulo`
-			INNER JOIN
-				proveedor ON(articulo.id_proveedor=proveedor.id_proveedor)
-			WHERE
-				articulo.id_articulo = $id";
-			$this->updatePrecios($this->getQuery($sql), $variacion);
+		$articulo = $this->getArticuloID($id);
+		$this->updatePrecios($articulo, $variacion);
+	}
+
+	public function updateByCosto($id, $costo){
+		$articulo = $this->getArticuloID($id);
+		$articulo[0]->precio_costo = $costo;
+		$this->updatePrecios($articulo, 0);
 	}
 
 	function updatePrecios($articulos, $datos) {
@@ -144,6 +131,31 @@ class Articulos_model extends MY_Model {
 		);
 
 		return $articulo_update;
+	}
+
+	public function getArticuloID($id){
+		$sql = "
+			SELECT
+					articulo.id_articulo,
+					articulo.cod_proveedor,
+					articulo.descripcion as descripcion,
+					articulo.precio_costo,
+					articulo.precio_venta_iva,
+					articulo.precio_venta_sin_iva,
+					articulo.iva as iva,
+					proveedor.descripcion as proveedor,
+					proveedor.descuento as descuento,
+					proveedor.descuento2 as descuento2,
+					proveedor.margen as margen,
+					proveedor.impuesto as impuesto
+			FROM
+				`articulo`
+			INNER JOIN
+				proveedor ON(articulo.id_proveedor=proveedor.id_proveedor)
+			WHERE
+				articulo.id_articulo = $id";
+
+			return $this->getQuery($sql);
 	}
 }
 ?>
