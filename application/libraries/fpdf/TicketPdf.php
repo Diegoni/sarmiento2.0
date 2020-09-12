@@ -91,8 +91,8 @@ class TicketPdf extends FPDF {
 			$spaceDesc .= ' ';
 		}
 		$datosCabecera = [
-			'   '.'CANT/PRECIO'.$spacePrice.'IVA',
 			'DESCRIPCION'.$spaceDesc.'PRECIO NETO',
+			'   '.'CANT/PRECIO'.$spacePrice.'IVA',
 		];
 
 		$this->AddPage();
@@ -131,8 +131,8 @@ class TicketPdf extends FPDF {
 				$precio = str_pad($precio, 20, " ", STR_PAD_RIGHT);
 
 				$datosDetalle = [
-					$cantidad.' / '.$precio.'(21.00)',
 					$descripcion.$precioNeto,
+					$cantidad.' / '.$precio.'(21.00)',
 				];
 				$this->addLineData($datosDetalle);
 

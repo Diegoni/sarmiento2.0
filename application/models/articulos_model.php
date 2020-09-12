@@ -64,11 +64,11 @@ class Articulos_model extends MY_Model {
 				stock_minimo,
 				stock_deseado,
 				llevar_stock,
+				articulo.margen as margen,
+				articulo.impuesto as impuesto,
 				proveedor.descripcion as proveedor,
 				proveedor.descuento as descuento,
-				proveedor.descuento2 as descuento2,
-				proveedor.margen as margen,
-				proveedor.impuesto as impuesto
+				proveedor.descuento2 as descuento2
 			FROM
 				`articulo`
 			INNER JOIN
@@ -81,13 +81,18 @@ class Articulos_model extends MY_Model {
 			return $this->getQuery($sql);
 	}
 
+	public function updateByProvider($id_proveedor){
+		$articulo = $this->getArticuloID(['proveedor.id_proveedor' => $id_proveedor]);
+		$this->updatePrecios($articulo, $variacion);
+	}
+
 	public function updateWhitPrice($id, $variacion){
-		$articulo = $this->getArticuloID($id);
+		$articulo = $this->getArticuloID(['articulo.id_articulo' => $id]);
 		$this->updatePrecios($articulo, $variacion);
 	}
 
 	public function updateByCosto($id, $costo){
-		$articulo = $this->getArticuloID($id);
+		$articulo = $this->getArticuloID(['articulo.id_articulo' => $id]);
 		$articulo[0]->precio_costo = $costo;
 		$this->updatePrecios($articulo, 0);
 	}
@@ -133,7 +138,7 @@ class Articulos_model extends MY_Model {
 		return $articulo_update;
 	}
 
-	public function getArticuloID($id){
+	public function getArticulos($filtros){
 		$sql = "
 			SELECT
 					articulo.id_articulo,
@@ -143,17 +148,22 @@ class Articulos_model extends MY_Model {
 					articulo.precio_venta_iva,
 					articulo.precio_venta_sin_iva,
 					articulo.iva as iva,
+					artiuclo.margen as margen,
+					articulo.impuesto as impuesto,
 					proveedor.descripcion as proveedor,
 					proveedor.descuento as descuento,
-					proveedor.descuento2 as descuento2,
-					proveedor.margen as margen,
-					proveedor.impuesto as impuesto
+					proveedor.descuento2 as descuento2
 			FROM
 				`articulo`
 			INNER JOIN
 				proveedor ON(articulo.id_proveedor=proveedor.id_proveedor)
-			WHERE
-				articulo.id_articulo = $id";
+			WHERE ";
+
+			foreach ($filtros as $field => $value) {
+				$sql .= $field." = ".$id." AND";
+			}
+
+			$sql = substr($sql, 0, -3);
 
 			return $this->getQuery($sql);
 	}
