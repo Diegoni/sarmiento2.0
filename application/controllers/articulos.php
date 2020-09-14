@@ -135,28 +135,28 @@ class Articulos extends My_Controller {
 			 ->display_as('id_subcategoria','Subcategoria')
 			 ->display_as('id_estado','Estado');
 		$crud->fields(	'cod_proveedor',
-						'descripcion',
-						'precio_costo',
-						 'margen',
-						 'iva',
-						 'impuesto',
-						'id_proveedor',
-						'id_grupo',
-						'id_categoria',
-						'id_subcategoria',
-						'stock_minimo',
-						'stock_deseado',
-						'llevar_stock');
+			'descripcion',
+			'precio_costo',
+			'margen',
+			'iva',
+			'impuesto',
+			'id_proveedor',
+			'id_grupo',
+			'id_categoria',
+			'id_subcategoria',
+			'stock_minimo',
+			'stock_deseado',
+			'llevar_stock');
 		$crud->required_fields(	'cod_proveedor',
-						'descripcion',
-						'precio_costo',
-						 'margen',
-						 'iva',
-						 'impuesto',
-						'id_proveedor',
-						'id_grupo',
-						'id_categoria',
-						'id_subcategoria');
+			'descripcion',
+			'precio_costo',
+			'margen',
+			'iva',
+			'impuesto',
+			'id_proveedor',
+			'id_grupo',
+			'id_categoria',
+			'id_subcategoria');
 
 		$crud->set_subject('articulo');
 		$crud->set_relation('id_proveedor','proveedor','{descripcion}', 'proveedor.id_estado = 1');
@@ -194,9 +194,7 @@ class Articulos extends My_Controller {
 	* @return bool
 	*/
 	public function actualizar_precios($datos, $id) {
-		$variacion = 0;
-		$this->articulos_model->updateWhitPrice($id, $variacion);
-
+		$this->articulos_model->updateWhitPrice($id, 0);
 	  return true;
 	}
 
@@ -205,21 +203,21 @@ class Articulos extends My_Controller {
 	* @return view
 	*/
 	public function actualizar_precios_lote() {
-		$db['proveedores']	= $this->proveedores_model->getRegistros();
-		$db['grupos']		= $this->grupos_model->getRegistros();
-		$db['categorias']	= $this->categorias_model->getRegistros();
-		$db['subcategorias']= $this->subcategorias_model->getRegistros();
+		$db['proveedores']		= $this->proveedores_model->getRegistros();
+		$db['grupos']					= $this->grupos_model->getRegistros();
+		$db['categorias']			= $this->categorias_model->getRegistros();
+		$db['subcategorias']	= $this->subcategorias_model->getRegistros();
 
 		if($this->input->post('buscar')) {
-			$datos = array(
-					'proveedor'		=> $this->input->post('proveedor'),
-					'grupo'				=> $this->input->post('grupo'),
-					'categoria'		=> $this->input->post('categoria'),
-					'subcategoria'=> $this->input->post('subcategoria'),
-					'variacion'		=> $this->input->post('variacion'),
-					'id_estado'		=> 1,
-					'date_upd'		=> date('Y:m:d H:i:s')
-			);
+			$datos = [
+				'proveedor'		=> $this->input->post('proveedor'),
+				'grupo'				=> $this->input->post('grupo'),
+				'categoria'		=> $this->input->post('categoria'),
+				'subcategoria'=> $this->input->post('subcategoria'),
+				'variacion'		=> $this->input->post('variacion'),
+				'id_estado'		=> 1,
+				'date_upd'		=> date('Y:m:d H:i:s')
+			];
 
 			$db['articulos']	= $this->articulos_model->getArticulos_variacion($datos);
 			$db['mensaje']		= ($db['articulos']) ? "Cantidad de articulos a actualizar: ".count($db['articulos']) : "No existen articulos";
@@ -227,17 +225,23 @@ class Articulos extends My_Controller {
 
 			if($this->input->post('confirmar')) {
 				$this->actualizaciones_precion_model->insert($datos);
-
 				$this->articulos_model->updatePrecios($db['articulos'], $datos);
-
 				$db['articulos']	= $this->articulos_model->getArticulos_variacion($datos);
 				$db['mensaje']		= "Los articulos se han actualizado";
 			}
-		}else{
-			$db['class']		= "show";
-			$db['actualizaciones']=$this->actualizaciones_precion_model->getRegistros();
+		} else {
+			$datos = [
+				'proveedor'		=> '',
+				'grupo'				=> '',
+				'categoria'		=> '',
+				'subcategoria'=> '',
+				'variacion'		=> '',
+			];
+			$db['class'] = "show";
+			$db['actualizaciones'] = $this->actualizaciones_precion_model->getRegistros();
 		}
 
+		$db['datos']			= $datos;
 		$this->setView(['actualizar precios_lote', 'calendarios/config_actualizar'], $db);
 	}
 
@@ -273,7 +277,6 @@ class Articulos extends My_Controller {
 
 	public function calculatePrices() {
 		$articulo = new StdClass;
-
 		$articulo->precio_costo = $this->input->post('precio_costo');
 		$articulo->descuento = $this->input->post('descuento');
 		$articulo->descuento2 = $this->input->post('descuento2');

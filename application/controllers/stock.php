@@ -6,6 +6,7 @@ class Stock extends My_Controller {
 		parent::__construct();
 		$this->load->model('stock_model');
 		$this->load->model('articulos_model');
+		$this->load->model('proveedores_model');
 	}
 
 	/*
@@ -83,5 +84,27 @@ class Stock extends My_Controller {
 		}
 		$db['filter'] = $filter;
 		$this->setView('stock/articulo', $db);
+	}
+
+	public function stockProveedor($id_proveedor = null)
+	{
+		$db['proveedor'] = ($id_proveedor != null) ? $this->proveedores_model->getRegistro($id_proveedor) : false;
+		$this->setView('stock/proveedor', $db);
+	}
+
+	public function getArticulos($id_proveedor = null)
+	{
+		$articulosReturn = [];
+		$articulos = ($id_proveedor != null) ? $this->articulos_model->getArticulos(['proveedor.id_proveedor' => $id_proveedor]) : false;
+		foreach ($articulos as $articulo) {
+			$classArticulo = new StdClass();
+			$classArticulo->cod_proveedor	= $articulo->cod_proveedor;
+			$classArticulo->descripcion		= $articulo->descripcion;
+			$classArticulo->stock					= $articulo->stock;
+			$classArticulo->stock_minimo	= ($articulo->stock_minimo > $articulo->stock) ? $articulo->stock_minimo - $articulo->stock : '-';
+			$classArticulo->stock_deseado	= ($articulo->stock_deseado > $articulo->stock) ? $articulo->stock_deseado - $articulo->stock : '-';
+			$articulosReturn[] = $classArticulo;
+		}
+		echo json_encode($articulosReturn);
 	}
 }

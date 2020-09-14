@@ -40,6 +40,7 @@ class Proveedores extends MY_Controller {
 		$crud->callback_after_insert(array($this, 'insert_log'));
 		$crud->callback_after_update(array($this, 'actualizar_precios'));
 		$crud->callback_delete(array($this,'delete_log'));
+		$crud->add_action('Stock', '', '','icon-archive', array($this, 'stockArticulo'));
 
 		$this->permisos_model->getPermisos_CRUD('permiso_proveedor', $crud);
 
@@ -48,9 +49,29 @@ class Proveedores extends MY_Controller {
 		$this->crudView($output);
 	}
 
+	function stockArticulo($id)
+	{
+		return site_url('/stock/stockProveedor').'/'.$id;
+	}
+
 	public function actualizar_precios($datos, $id)
 	{
 		$this->articulos_model->updateByProvider($id);
 		return true;
+	}
+
+	public function searchProveedor()
+	{
+		$proveedores= $this->proveedores_model->getProveedor($_GET['term']);
+		if ($proveedores) {
+			foreach ($proveedores as $rowProveedor) {
+				$row['value']	= htmlentities(stripslashes($rowProveedor->descripcion));
+				$row['id'] = (int) $rowProveedor->id_proveedor;
+				$row_set[] = $row;
+			}
+			echo json_encode($row_set);
+		} else {
+			return FALSE;
+		}
 	}
 }

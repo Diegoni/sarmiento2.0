@@ -148,8 +148,11 @@ class Articulos_model extends MY_Model {
 					articulo.precio_venta_iva,
 					articulo.precio_venta_sin_iva,
 					articulo.iva as iva,
-					artiuclo.margen as margen,
+					articulo.margen as margen,
 					articulo.impuesto as impuesto,
+					articulo.stock,
+					articulo.stock_minimo,
+					articulo.stock_deseado,
 					proveedor.descripcion as proveedor,
 					proveedor.descuento as descuento,
 					proveedor.descuento2 as descuento2
@@ -160,10 +163,11 @@ class Articulos_model extends MY_Model {
 			WHERE ";
 
 			foreach ($filtros as $field => $value) {
-				$sql .= $field." = ".$id." AND";
+				$sql .= $field." = ".$value." AND";
 			}
 
 			$sql = substr($sql, 0, -3);
+			$sql .= ' ORDER BY articulo.descripcion';
 
 			return $this->getQuery($sql);
 	}

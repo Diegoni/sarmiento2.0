@@ -185,6 +185,7 @@ if ($articulo) {
 					</div>
 				</form>
 			</div>
+			<br>
   		<div  id="printableArea">
 				<table id="table_detail" class="table" cellpadding="5" cellspacing="5" width="100%" style="border-collapse:collapse;">
 					<thead>
@@ -211,14 +212,18 @@ if ($articulo) {
 								echo '<td class="td-center">'.$rowDetail->cantidad.'</td>';
 								echo '</tr>';
 							}
-
-							echo '<tr>';
-							echo '<th colspan="4">Total</th>';
-							echo '<th class="td-center">'.$total.'</th>';
-							echo '</tr>';
 						}
 						?>
 					</tbody>
+					<tfoot>
+						<tr>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th>Total</th>
+							<th><?php echo $total?></th>
+						</tr>
+					</tfoot>
 				</table>
 			</div>
 			</div>
@@ -230,6 +235,7 @@ if ($articulo) {
 
 <script>
 $(function() {
+	$("#articulo").focus();
 	$("#articulo").autocomplete({
 	  source: "<?php echo base_url()?>index.php/articulos/searchArticulo",
 	  minLength: 2,//search after two characters
@@ -264,14 +270,41 @@ $(function() {
 	$( "#filterDesde" ).datepicker({
 		maxDate: '0',
 		changeMonth: true,
-				changeYear: true,
+		changeYear: true,
 		dateFormat: 'dd-mm-yy',
 		onClose: function( selectedDate ) {
 			$( "#filterHasta" ).datepicker( "option", "minDate", selectedDate );
 		}
 	});
 });
+
 $(document).ready(function() {
-	//$('#table_facturas').DataTable();
+	$('#table_detail').DataTable({
+	   "language": {
+	       "sProcessing":    "Procesando...",
+	       "sLengthMenu":    "Mostrar _MENU_ registros",
+	       "sZeroRecords":   "No se encontraron resultados",
+	       "sEmptyTable":    "Ningún dato disponible en esta tabla",
+	       "sInfo":          "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+	       "sInfoEmpty":     "Mostrando registros del 0 al 0 de un total de 0 registros",
+	       "sInfoFiltered":  "(filtrado de un total de _MAX_ registros)",
+	       "sInfoPostFix":   "",
+	       "sSearch":        "Buscar:",
+	       "sUrl":           "",
+	       "sInfoThousands":  ",",
+	       "sLoadingRecords": "Cargando...",
+	       "oPaginate": {
+	           "sFirst":    "Primero",
+	           "sLast":    "Último",
+	           "sNext":    "Siguiente",
+	           "sPrevious": "Anterior"
+	       },
+	       "oAria": {
+	           "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+	           "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+	       }
+	   }
+	 });
 });
+
 </script>

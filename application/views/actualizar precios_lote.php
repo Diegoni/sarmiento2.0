@@ -1,6 +1,31 @@
 <script>
 $(document).ready(function() {
-    $('#table_actualizacion').DataTable();
+  $('#table_actualizacion').DataTable({
+    "language": {
+       "sProcessing":    "Procesando...",
+       "sLengthMenu":    "Mostrar _MENU_ registros",
+       "sZeroRecords":   "No se encontraron resultados",
+       "sEmptyTable":    "Ningún dato disponible en esta tabla",
+       "sInfo":          "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+       "sInfoEmpty":     "Mostrando registros del 0 al 0 de un total de 0 registros",
+       "sInfoFiltered":  "(filtrado de un total de _MAX_ registros)",
+       "sInfoPostFix":   "",
+       "sSearch":        "Buscar:",
+       "sUrl":           "",
+       "sInfoThousands":  ",",
+       "sLoadingRecords": "Cargando...",
+       "oPaginate": {
+           "sFirst":    "Primero",
+           "sLast":    "Último",
+           "sNext":    "Siguiente",
+           "sPrevious": "Anterior"
+       },
+       "oAria": {
+           "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+           "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+       }
+    }
+  });
 });
 </script>
 <div class="container">
@@ -10,82 +35,76 @@ $(document).ready(function() {
 			  <div class="panel-body">
   			  <!-- Formulario de busqueda -->
           <?php echo form_open('articulos/actualizar_precios_lote');?>
-
-				<div class="row">
+          <div class="row">
     				<div for="proveedor" class="col-sm-2 control-label">Proveedor</div>
     				<div class="col-sm-4">
-						<select class="form-control chosen-select" name="proveedor" id="proveedor">
-							<option value=""></option>
-							<?php foreach ($proveedores as $proveedor) { ?>
-								<option value="<?php echo $proveedor->descripcion?>"><?php echo $proveedor->descripcion ?></option>
-							<?php } ?>
-						</select>
+  						<select class="form-control chosen-select" name="proveedor" id="proveedor">
+  							<option value=""></option>
+  							<?php foreach ($proveedores as $proveedor) { ?>
+  								<option value="<?php echo $proveedor->descripcion?>" <?php echo ($proveedor->descripcion == $datos['proveedor']) ? 'selected' : '' ?>><?php echo $proveedor->descripcion ?></option>
+  							<?php } ?>
+  						</select>
     				</div>
 
     				<div for="grupo" class="col-sm-2 control-label">Grupo</div>
     				<div class="col-sm-4">
-						<select class="form-control chosen-select" name="grupo" id="grupo">
-							<option value=""></option>
-							<?php foreach ($grupos as $grupo) { ?>
-								<option value="<?php echo $grupo->descripcion?>"><?php echo $grupo->descripcion ?></option>
-							<?php } ?>
-						</select>
+  						<select class="form-control chosen-select" name="grupo" id="grupo">
+  							<option value=""></option>
+  							<?php foreach ($grupos as $grupo) { ?>
+  								<option value="<?php echo $grupo->descripcion?>" <?php echo ($grupo->descripcion == $datos['grupo']) ? 'selected' : '' ?>><?php echo $grupo->descripcion ?></option>
+  							<?php } ?>
+  						</select>
     				</div>
   				</div>
 
   				<div class="row">
     				<div for="categoria" class="col-sm-2 control-label">Categoria</div>
     				<div class="col-sm-4">
-						<select class="form-control chosen-select" name="categoria" id="categoria">
-							<option value=""></option>
-							<?php foreach ($categorias as $categoria) { ?>
-								<option value="<?php echo $categoria->descripcion?>"><?php echo $categoria->descripcion ?></option>
-							<?php } ?>
-						</select>
+  						<select class="form-control chosen-select" name="categoria" id="categoria">
+  							<option value=""></option>
+  							<?php foreach ($categorias as $categoria) { ?>
+  								<option value="<?php echo $categoria->descripcion?>" <?php echo ($categoria->descripcion == $datos['categoria']) ? 'selected' : '' ?>><?php echo $categoria->descripcion ?></option>
+  							<?php } ?>
+  						</select>
     				</div>
 
     				<div for="sub-categoria" class="col-sm-2 control-label">Sub-categoria</div>
     				<div class="col-sm-4">
-						<select class="form-control chosen-select" name="sub-categoria" id="sub-categoria">
-							<option value=""></option>
-							<?php foreach ($subcategorias as $subcategoria) { ?>
-								<option value="<?php echo $subcategoria->descripcion?>"><?php echo $subcategoria->descripcion ?></option>
-							<?php } ?>
-						</select>
+  						<select class="form-control chosen-select" name="sub-categoria" id="sub-categoria">
+  							<option value=""></option>
+  							<?php foreach ($subcategorias as $subcategoria) { ?>
+  								<option value="<?php echo $subcategoria->descripcion?>" <?php echo ($subcategoria->descripcion == $datos['subcategoria']) ? 'selected' : '' ?>><?php echo $subcategoria->descripcion ?></option>
+  							<?php } ?>
+  						</select>
     				</div>
   				</div>
-
+          <br>
   				<div class="row">
     				<div for="variacion" class="col-sm-2 control-label">Variación</div>
     				<div class="col-sm-4">
-						<input type="number" class="form-control" placeholder="Variación" name="variacion" min="-100" max="100" step="0.1" id="slider" onchange="Positivo(this)" required>
-					</div>
-					<div for="variacion" class="col-sm-2 control-label"></div>
-    				<div class="col-sm-2">
-    					<button type="submit" class="btn btn-primary form-control" title="Buscar" name="buscar" value="1" onsubmit="debeseleccionar()">Buscar</button>
+              <input type="number" class="form-control" placeholder="Variación" name="variacion" min="-100" max="100" step="0.1" id="slider" onchange="Positivo(this)" value="<?php echo $datos['variacion'] ?>" required>
+					  </div>
+  					<div class="row">
+      				<div class="col-sm-2">
+                <a class="btn btn-default form-control" href="<?php echo base_url()?>index.php/articulos/actualizar_precios_lote">Resetear filtros</a>
+      				</div>
+              <div class="col-sm-2">
+      					<button type="submit" class="btn btn-primary form-control" title="Buscar" name="buscar" value="1" onsubmit="debeseleccionar()">Buscar</button>
+      				</div>
     				</div>
-    				<div class="col-sm-2">
-    				</div>
-  				</div>
-
-  			<?php echo form_close();?>
-  			</div>
-  			</div>
+          <?php echo form_close();?>
+  			  </div>
+        </div>
 
   			<?php if($this->input->post('buscar')){?>
   			<div class="panel">
-			<div class="panel-body">
-
-				<!--
-							Tabla de articulos
-				-->
-
-				<?php if($this->input->post('confirmar')){?>
+          <div class="panel-body">
+				<?php if($this->input->post('confirmar')) {?>
 					<div class="alert alert-success alert-dismissible" role="alert">
 				 	<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 				  		<?php echo $mensaje ?>
 					</div>
-				<?php }else{ ?>
+				<?php } else { ?>
 					 <?php echo form_open('articulos/actualizar_precios_lote');?>
 						 <input type="hidden" name="proveedor" value="<?php echo $this->input->post('proveedor');?>">
 						 <input type="hidden" name="grupo" value="<?php echo $this->input->post('grupo');?>">
@@ -117,7 +136,7 @@ $(document).ready(function() {
 					</thead>
 					<tbody>
 						<?php
-						if($articulos){
+						if($articulos) {
 						foreach ($articulos as $articulo) { ?>
 							<tr>
 								<td><?php echo $articulo->cod_proveedor?></td>
@@ -173,11 +192,8 @@ $(document).ready(function() {
 			</div>
 			</div>
 			<?php
-			}
-			else
-			{
-				if($actualizaciones)
-				{
+			} else {
+				if($actualizaciones) {
 					echo '<div class="row">';
 					echo '<div class="col-md-12">';
 					echo '<div class="panel panel-default">';
