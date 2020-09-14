@@ -82,17 +82,17 @@ class Articulos_model extends MY_Model {
 	}
 
 	public function updateByProvider($id_proveedor){
-		$articulo = $this->getArticuloID(['proveedor.id_proveedor' => $id_proveedor]);
+		$articulo = $this->getArticulos(['proveedor.id_proveedor' => $id_proveedor]);
 		$this->updatePrecios($articulo, $variacion);
 	}
 
 	public function updateWhitPrice($id, $variacion){
-		$articulo = $this->getArticuloID(['articulo.id_articulo' => $id]);
+		$articulo = $this->getArticulos(['articulo.id_articulo' => $id]);
 		$this->updatePrecios($articulo, $variacion);
 	}
 
 	public function updateByCosto($id, $costo){
-		$articulo = $this->getArticuloID(['articulo.id_articulo' => $id]);
+		$articulo = $this->getArticulos(['articulo.id_articulo' => $id]);
 		$articulo[0]->precio_costo = $costo;
 		$this->updatePrecios($articulo, 0);
 	}
