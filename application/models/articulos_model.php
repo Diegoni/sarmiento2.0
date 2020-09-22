@@ -160,7 +160,8 @@ class Articulos_model extends MY_Model {
 				`articulo`
 			INNER JOIN
 				proveedor ON(articulo.id_proveedor=proveedor.id_proveedor)
-			WHERE ";
+			WHERE
+				articulo.id_estado = 1 ";
 
 			foreach ($filtros as $field => $value) {
 				$sql .= $field." = ".$value." AND";
