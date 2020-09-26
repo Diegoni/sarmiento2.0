@@ -63,6 +63,9 @@ $(document).ready(function() {
 						<input type="text" class="form-control" id="cliente" name="cliente" value="<?php echo $cliente;?>" placeholder="Cliente">
 					</div>
 					<div class="col-md-4">
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#cabeceraModal" id="btnModalCabecera">
+              Numeración
+            </button>
 						<button class="btn btn-primary" name="buscar">
 							Cambiar
 						</button>
@@ -125,3 +128,49 @@ $(document).ready(function() {
     text-align: center;
 }
 </style>
+
+
+<div class="modal fade" id="cabeceraModal" tabindex="-1" role="dialog" aria-labelledby="myModalComentario">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalComentario">Numeración</h4>
+      </div>
+      <div class="modal-body">
+        <table class="table">
+          <tr>
+          <th>Comprobante</th>
+          <th>Numeracion</th>
+          <tr>
+          <?php if ($afip){
+            foreach ($afip as $rowAfip) {
+              echo '<tr>';
+              echo '<td>'.$comprobantes[$rowAfip->tipo_comprobante].'</td>';
+              echo '<td>'.$rowAfip->cbte_desde.'</td>';
+              echo '</tr>';
+            }
+          }
+          ?>
+        </table>
+      </div>
+      <div class="modal-footer">
+       <button type="button" class="btn btn-default" data-dismiss="modal" id="cancel_cabecera">Cancelar</button>
+       <button type="button" class="btn btn-primary" data-dismiss="modal" id="guardar_cabecera" onclick="actualizar()">Actualizar</button>
+      </div>
+     </div>
+   </div>
+  </div>
+
+<script>
+function actualizar(){
+  $.ajax({
+      type: "POST",
+      url: '<?php echo base_url()?>index.php/afipFactuaElectronica/synchronizeVoucherNumbering/',
+      complete: function(response)
+      {
+         location.reload();
+      }
+  });
+}
+</script>

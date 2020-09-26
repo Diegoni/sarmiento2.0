@@ -1,5 +1,4 @@
 <?php
-
 $sql = "
 SELECT
   *

@@ -16,7 +16,7 @@ include_once('config/values.php');
 
 
 <div class="container">
-  <!-- Primer Bloque -->
+<!-- Primer Bloque -->
   <div class="panel panel-default">
     <div class="panel-heading">
       BULONES SARMIENTO
@@ -67,8 +67,7 @@ include_once('config/values.php');
     </div>
   </div> <!-- panel panel-default-->
 
-<!-- Segundo bloque carga de articulos -->
-
+<!-- Tercer bloque detalle  -->
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-success">
