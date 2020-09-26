@@ -1,0 +1,11 @@
+.ui-widget-content{
+  z-index: 9000;
+}
+#search:hover{
+  cursor: pointer;
+  background-color: #d9534f;
+  color: #fff;
+}
+.ico_borra{
+  padding: 5px;
+}

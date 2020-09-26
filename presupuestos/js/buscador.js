@@ -54,6 +54,8 @@ function limpia_cli() {
 
 function carga_presupuesto() {
 	if($('#total_presupuesto').val() > 0) {
+		$('#cont_boton').prop('disabled', true);
+
 		var bandera_tipo_pago = $("#forma_pago").val();
 		var cli_id = $("#id_cliente").val();
 		var pertmite_cta_cte = $("#pertmite_cta_cte").val();
@@ -88,6 +90,8 @@ function carga_presupuesto() {
 				guarda_detalle(),fin_presupuesto();
 			}
 		}
+
+		$('#cont_boton').prop('disabled', false);
 	} else {
 		alert("Presupuesto vacio");
 	}
@@ -538,3 +542,10 @@ function validarCuit(cuit) {
 
     return digito == verif;
 }
+
+
+$(document).ready(function(){
+	 $("#cancel_comentario").click(function() {
+  		 $('#comentario').val('');
+	});
+});

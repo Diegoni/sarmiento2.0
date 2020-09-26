@@ -161,13 +161,13 @@ class Articulos_model extends MY_Model {
 			INNER JOIN
 				proveedor ON(articulo.id_proveedor=proveedor.id_proveedor)
 			WHERE
-				articulo.id_estado = 1 ";
+				articulo.id_estado = 1 AND ";
 
 			foreach ($filtros as $field => $value) {
-				$sql .= $field." = ".$value." AND";
+				$sql .= $field." = ".$value." AND ";
 			}
 
-			$sql = substr($sql, 0, -3);
+			$sql = substr($sql, 0, -4);
 			$sql .= ' ORDER BY articulo.descripcion';
 
 			return $this->getQuery($sql);

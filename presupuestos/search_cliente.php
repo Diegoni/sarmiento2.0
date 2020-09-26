@@ -1,5 +1,5 @@
 <?php
-include_once('conexion.php');
+include_once('config/conexion.php');
 //connect to your database
 $term = trim(strip_tags(utf8_decode($_GET['term'])));//retrieve the search term that autocomplete sends
 

@@ -1,17 +1,17 @@
 <?php
-include_once('conexion.php');
+include_once('config/conexion.php');
 //connect to your database
-const CAE = 2;
-$logsFile = "logs/".date('Y-m-d').'.log';
-$fecha		= date('Y-m-d H:i:s');
-$monto		= $_POST['total'];
-$id_cliente	= $_POST['cliente'];
-$tipo		= $_POST['tipo'];
-$estado		= $_POST['estado'];
-$dto		= $_POST['desc'];
-$id_vendedor   = $_POST['vendedor'];
-$comentario	= $_POST['comentario'];
-$com_publico  = $_POST['com_publico'];
+const CAE					= 2;
+$logsFile					= "logs/".date('Y-m-d').'.log';
+$fecha						= date('Y-m-d H:i:s');
+$monto						= $_POST['total'];
+$id_cliente				= $_POST['cliente'];
+$tipo							= $_POST['tipo'];
+$estado						= $_POST['estado'];
+$dto							= $_POST['desc'];
+$id_vendedor			= $_POST['vendedor'];
+$comentario				= $_POST['comentario'];
+$com_publico  		= $_POST['com_publico'];
 
 $codigos_a_cargar	= $_POST['codigos_art'];
 $cant_a_cargar		= $_POST['cantidades'];

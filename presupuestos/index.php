@@ -1,35 +1,6 @@
 <?php
-include_once('conexion.php');
-
-$sql = "
-SELECT
-  *
-FROM
-  `vendedor`
-WHERE
-    id_estado = 1";
-
-$result_vendedores = $conn->query($sql) ;
-$optionVendedores = '';
-
-if($result_vendedores) {
-  while ($row_vendedor = $result_vendedores->fetch_array(MYSQLI_ASSOC)) {
-    $optionVendedores .= "<option value=".$row_vendedor['id_vendedor']."> ".$row_vendedor['vendedor']."</option>";
-  }
-}
-
-$qstring = "
-SELECT
-    cantidad_inicial
-FROM
-    config
-WHERE
-    id_config = 1";
-$result_config = $conn->query($qstring) ;//query the database for entries containing the term
-
-while ($row = $result_config->fetch_array(MYSQLI_ASSOC)) {
-    $cantidad_inicial = $row['cantidad_inicial'];
-}
+include_once('config/conexion.php');
+include_once('config/values.php');
 ?>
 
 <html lang="es">
@@ -39,62 +10,62 @@ while ($row = $result_config->fetch_array(MYSQLI_ASSOC)) {
     <title>Bulones Sarmiento</title>
     <link rel="stylesheet" href="css/jquery-ui.css" type="text/css" />
     <link rel="stylesheet" href="librerias/bootstrap/css/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="css/main.css" type="text/css" />
 </head>
 <body onload="inicializa()">
 
-<!-- Primer Bloque -->
 
 <div class="container">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            BULONES SARMIENTO
-            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#cabeceraModal" id="btnModalCabecera">Cabecera</button>
-            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#comentarioModal">Comentario</button>
-            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#imprimirModal">Imprimir</button>
-        </div>
+  <!-- Primer Bloque -->
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      BULONES SARMIENTO
+      <button type="button" class="btn btn-default" data-toggle="modal" data-target="#cabeceraModal" id="btnModalCabecera">Cabecera</button>
+      <button type="button" class="btn btn-default" data-toggle="modal" data-target="#comentarioModal">Comentario</button>
+      <button type="button" class="btn btn-default" data-toggle="modal" data-target="#imprimirModal">Imprimir</button>
+    </div>
+  </div>
 
 <!-- Modals -->
-
 <?php include_once('modals/comentario.php'); ?>
 <?php include_once('modals/cabecera.php') ?>
 <?php include_once('modals/imprimir.php') ?>
 
 <!-- Segundo bloque carga de articulos -->
-
-    <div class="panel panel-default">
-        <div class="panel-body">
-            <div id="cont_busqueda_articulo">
-                <div id="cont_busca">
-                <form  action='' method='post'>
-                    <div class="row">
-                        <p>
-                            <div class="col-md-8">
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">BUSCAR:</label>
-                                    <input class="form-control" type='text' placeholder="Cod o Detalle" name='country' value='' id='quickfind'/>
-                                    <!--<input class="form-control" type='text' placeholder="Busqueda x Codigo" name='country' value='' id='quickfind_cod'/>
-                                --></div>
+  <div class="panel panel-default">
+    <div class="panel-body">
+        <div id="cont_busqueda_articulo">
+            <div id="cont_busca">
+            <form  action='' method='post'>
+                <div class="row">
+                    <p>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">BUSCAR:</label>
+                                <input class="form-control" type='text' placeholder="Cod o Detalle" name='country' value='' id='quickfind'/>
+                                <!--<input class="form-control" type='text' placeholder="Busqueda x Codigo" name='country' value='' id='quickfind_cod'/>
+                            --></div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Precio</label>
+                                <input class="form-control" id="px_unitario_rapido" readonly="true"/>
                             </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">Precio</label>
-                                    <input class="form-control" id="px_unitario_rapido" readonly="true"/>
-                                </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Cantidad:</label>
+                                <input class="form-control" type='number' name='cantidad' value='<?php echo $cantidad_inicial?>' id='cantidad'/>
+                                <p><input onclick="carga(item_elegido)" type='button' id="carga_articulo" hidden="hidden"/></p>
                             </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">Cantidad:</label>
-                                    <input class="form-control" type='number' name='cantidad' value='<?php echo $cantidad_inicial?>' id='cantidad'/>
-                                    <p><input onclick="carga(item_elegido)" type='button' id="carga_articulo" hidden="hidden"/></p>
-                                </div>
-                            </div>
-                        </p>
-                    </div>
-                </form>
+                        </div>
+                    </p>
                 </div>
+            </form>
             </div>
         </div>
-    </div> <!-- panel panel-default-->
+    </div>
+  </div> <!-- panel panel-default-->
 
 <!-- Segundo bloque carga de articulos -->
 
@@ -145,60 +116,10 @@ while ($row = $result_config->fetch_array(MYSQLI_ASSOC)) {
 </div> <!-- class="container" -->
 
 <!-- Carga de librerias -->
-
 <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui.js"></script>
 <script type="text/javascript" src="js/buscador.js"></script>
 <script type="text/javascript" src="librerias/bootstrap/js/bootstrap.js"></script>
 
-<script>
-$(document).ready(function(){
-    $(".slidingDiv").hide();
-    $(".show_hide").show();
-
-    $('.show_hide').click(function(){
-        $(".slidingDiv").slideToggle();
-    });
-});
-
-$(document).ready(function(){
-	 $("#cancel_comentario").click(function() {
-  		 $('#comentario').val('');
-	});
-});
-</script>
-<style>
-.ui-widget-content{
-  z-index: 9000;
-}
-#search:hover{
-  cursor: pointer;
-  background-color: #d9534f;
-  color: #fff;
-}
-.ico_borra{
-  padding: 5px;
-}
-
-</style>
-
-
-<!-- Carga devoluciones ? -->
-
-
-    <div id="devoluciones" style="display:none">
-        <div class="row cabecera">
-            <div class="col-xs-12 cabecera">
-                <span class="col-xs-1">Devolucion</span>
-                <span class="col-xs-2">Fecha</span>
-                <span class="col-xs-1">Monto</span>
-                <span class="col-xs-1">A cuenta</span>
-                <span class="col-xs-4">Nota</span>
-                <span class="col-xs-3">Accion</span>
-            </div>
-            <div id="reglon_devoluciones" class="col-xs-12">
-            </div>
-        </div>
-    </div>
 </body>
 </html>

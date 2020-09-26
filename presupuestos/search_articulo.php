@@ -1,5 +1,5 @@
 <?php
-include_once('conexion.php');
+include_once('config/conexion.php');
 $term = trim(strip_tags(utf8_decode($_GET['term'])));
 
 $query = "SELECT
