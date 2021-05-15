@@ -20,10 +20,10 @@ class Articulos_model extends MY_Model {
 			articulo.precio_venta_iva,
 			articulo.precio_venta_sin_iva,
 			articulo.iva as iva,
+			articulo.margen as margen,
 			proveedor.descripcion as proveedor,
 			proveedor.descuento as descuento,
 			proveedor.descuento2 as descuento2,
-			proveedor.margen as margen,
 			proveedor.impuesto as impuesto,
 			grupo.descripcion as grupo,
 			categoria.descripcion as categoria,
@@ -137,6 +137,29 @@ class Articulos_model extends MY_Model {
 
 		return $articulo_update;
 	}
+	/*
+	// No permitimos que un articulo tenga margen de ganancia 0, a menos que en el articulo y el proveedor tengan margen 0
+	public function getMargenProveedor($id_articulo){
+		$sql = "
+			SELECT
+				articulo.margen as margen_articulo,
+				proveedor.margen as margen_proveedor
+			FROM
+				`articulo`
+			INNER JOIN
+				proveedor ON(articulo.id_proveedor=proveedor.id_proveedor)
+			WHERE
+				articulo.id_articulo = ".$id_articulo;
+		$margenes = $this->getQuery($sql);
+		$margenReturn = 0;
+
+		if ($margenes) {
+			$margenReturn = ($margenes[0]->margen_articulo > 0) ? $margenes[0]->margen_articulo : $margenes[0]->margen_proveedor;
+		}
+
+		return $margenReturn;
+	}
+	*/
 
 	public function getArticulos($filtros){
 		$sql = "
