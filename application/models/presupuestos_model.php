@@ -156,5 +156,18 @@ class Presupuestos_model extends MY_Model {
 
 		return $this->getQuery($sql);
 	}
+
+
+	function getCount(){
+		$sql =
+			"SELECT
+				count(*) as TOTAL
+			FROM
+				$this->_table";
+
+		return $this->getQuery($sql);
+	}
+
+
 }
 ?>

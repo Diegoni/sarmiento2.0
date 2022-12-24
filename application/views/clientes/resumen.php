@@ -191,7 +191,7 @@ $(document).ready(function() {
                     				<p><strong>Dirección: </strong><?php echo $row->direccion ?></p>
                     				<p><strong>Teléfono: </strong><?php echo $row->telefono ?></p>
 				                    <p><strong>Celular: </strong><?php echo $row->celular ?></p>
-				                	<p><strong>Nextel: </strong><?php echo $row->nextel ?></p>
+				                	<p><strong>Mail: </strong><?php echo $row->mail ?></p>
                     			</div>
                 				<div class="col-sm-6">
                     				<p><strong>Cuil: </strong><?php echo $row->cuil ?></p>

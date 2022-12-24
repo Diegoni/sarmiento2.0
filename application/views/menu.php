@@ -72,6 +72,7 @@
           	<li class="divider"></li>
           	<li><a  href='<?php echo site_url('clientes/tipo_abm')?>'>Tipo</a></li>
           	<li><a  href='<?php echo site_url('clientes/condicion_iva_abm')?>'>Condicion Iva</a></li>
+			<li><a  href='<?php echo site_url('reglas/reglas_abm')?>'>Reglas Ventas</a></li>
           </ul>
         </li>
 

@@ -161,7 +161,8 @@ class AfipFactuaElectronica extends My_Controller {
 		}
 
 		private function getAfipObjet(){
-			$dataEmpresa = [	'cert' => 'sarmientows_4ac84b96cef5e957.crt',
+			$dataEmpresa = [	
+					'cert' => 'sarmientows_95a79f9008421d7.crt',
 					'key' => 'privada.key',
 					'CUIT' => 30672163494,
 					'production' => TRUE

@@ -30,9 +30,7 @@ if($clientes) {
 	$cant_clientes = count($clientes);
 }
 
-if($presupuestos_cant) {
-	$cant_presupuestos = count($presupuestos_cant);
-}
+$cant_presupuestos = $presupuestos_cant[0]->TOTAL;
 
 if($presupuestos) {
 	foreach ($presupuestos as $row) {

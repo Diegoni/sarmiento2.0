@@ -29,18 +29,21 @@ class Home extends My_Controller {
 		}
 		$final	= date('01-'.$mes.'-'.$ano);
 
+		$db = [];
+		
 		$db['presupuestos']	= $this->presupuestos_model->suma_presupuesto($inicio, $final);
 		$db['mes_actual']	= $mes;
 		$db['ano_actual']	= $ano;
 		$db['calendarios']	= $this->calendarios_model->getCalendarios();
 		$db['articulos']	= $this->articulos_model->getRegistros();
 		$db['clientes']		= $this->clientes_model->getRegistros();
-		$db['remitos']		= $this->remitos_model->getRegistros();
-		$db['presupuestos_cant']	= $this->presupuestos_model->getBusqueda('*');
+		$db['remitos']		= $this->remitos_model->getRegistros();		
+		$db['presupuestos_cant']	= $this->presupuestos_model->getCount();
 		$db['presupuestos_detalle']	= $this->renglon_presupuesto_model->Ultimos(10);
 		$db['tipos']		= $this->clientes_model->getSumas('tipos');
 		$db['condiciones']	= $this->clientes_model->getSumas('condicion');
 		$db['proveedores']	= $this->proveedores_model->getTotalArticulos();
+
 
 		$this->setView(['home.php', 'calendarios/config.php'], $db);
 	}

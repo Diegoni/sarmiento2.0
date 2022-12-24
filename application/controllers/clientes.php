@@ -9,6 +9,8 @@ class Clientes extends MY_Controller {
 		$this->load->model('presupuestos_model');
 		$this->load->model('devoluciones_model');
 		$this->load->model('remitos_model');
+		$this->load->model('reglas_ventas_model');
+		
 
 		$this->load->library('grocery_CRUD');
 	}
@@ -49,7 +51,7 @@ class Clientes extends MY_Controller {
 					'direccion',
 					'telefono',
 					'celular',
-					'nextel',
+					'mail',
 					'id_condicion_iva',
 					'id_tipo',
 					'comentario'

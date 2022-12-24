@@ -1,4 +1,6 @@
+<!-- imprimir -->
 <?php
+include_once('../config/conexion.php');
 $sql = "
 SELECT
   *
@@ -12,7 +14,6 @@ LIMIT
   10";
 
 $result_presupuestos = $conn->query($sql) ;
-$version = explode("/", $_SERVER["REQUEST_URI"]);
 ?>
 
 
@@ -32,6 +33,7 @@ $version = explode("/", $_SERVER["REQUEST_URI"]);
               <th>Monto</th>
               <th>Descuento</th>
               <th>Cliente</th>
+              <th>Opciones</th>
             </tr>
           </thead>
           <tbody>
@@ -39,12 +41,18 @@ $version = explode("/", $_SERVER["REQUEST_URI"]);
           $tbody = '';
           if($result_presupuestos) {
             while ($row_presupuesto = $result_presupuestos->fetch_array(MYSQLI_ASSOC)) {
-              $tbody .= "<tr onclick='imprimir(".$row_presupuesto['id_presupuesto'].")'>";
+              $disabledMail = ($row_presupuesto['mail'] == '') ? 'disabled' : '';
+              $textMail = ($row_presupuesto['mail'] == '') ? 'Completar mail' : 'Enviar mail a :'.$row_presupuesto['mail'];
+              $tbody .= "<tr>";
               $tbody .= "<td>".$row_presupuesto['id_presupuesto']."</td>";
               $tbody .= "<td>". date("d-m-Y H:i", strtotime($row_presupuesto['fecha']))."</td>";
               $tbody .= "<td>$ ".round($row_presupuesto['monto'], 3)."</td>";
               $tbody .= "<td>$ ".round($row_presupuesto['descuento'], 3)."</td>";
               $tbody .= "<td>".$row_presupuesto['alias']." - ".$row_presupuesto['apellido'].", ".$row_presupuesto['nombre']."</td>";
+              $tbody .= "<td>
+                <button title='Imprimir' type='button' class='btn btn-default' onclick='imprimir(".$row_presupuesto['id_presupuesto'].")'><span class='glyphicon glyphicon-print' aria-hidden='true'></span></button>
+                <button title='".$textMail."' type='button' class='btn btn-default' onclick='mail(".$row_presupuesto['id_presupuesto'].")' ".$disabledMail."><span class='glyphicon glyphicon-envelope' aria-hidden='true'></span></button>
+              </td>";
               $tbody .= "</tr>";
             }
           }
@@ -62,10 +70,20 @@ $version = explode("/", $_SERVER["REQUEST_URI"]);
 
 <script>
 function imprimir(id_presupuesto){
-  var host = '<?php echo $_SERVER["HTTP_HOST"] ?>';
-  var version = '<?php echo $version[1];?>';
-  var url = 'http://'+host+'/'+version+'/index.php/presupuestos/setPDF/'+id_presupuesto;
+  var url = 'http://bulonessarmiento.com/gestion/index.php/presupuestos/setPDF/'+id_presupuesto;
   window.open(url, '_blank');
+}
+
+
+function mail(id_presupuesto){
+  $.ajax({
+    type:"POST",
+    url:'http://bulonessarmiento.com/gestion/index.php/mails/enviar/'+id_presupuesto,
+    data:{},
+    success:function(datos){
+      alert("Correo enviado");
+     },
+  })
 }
 </script>
 <style>

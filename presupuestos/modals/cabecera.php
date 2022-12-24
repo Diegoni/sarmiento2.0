@@ -1,3 +1,4 @@
+<!-- cabecera -->
 <div class="modal fade" id="cabeceraModal" tabindex="-1" role="dialog" aria-labelledby="myModalComentario">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">

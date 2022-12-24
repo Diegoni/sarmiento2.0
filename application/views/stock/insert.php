@@ -143,9 +143,27 @@
 				</div>
 
 				<div class="col-md-2">
+					
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-2">
+					<div class="form-group">
+						<label class="col-sm-2 control-label disabled" style="opacity: -1;">T</label>
+						<button onclick="modificarItem(item_elegido)" type='button' id="modificar_articulo" class="btn btn-warning form-control disabled"/>MODIFICAR ITEM</button>
+					</div>
+				</div>
+				<div class="col-md-2">
 					<div class="form-group">
 						<label class="col-sm-2 control-label" style="opacity: -1;">T</label>
-						<button onclick="carga(item_elegido)" type='button' id="carga_articulo" class="btn btn-default form-control"/>CARGAR ITEM</button>
+						<button onclick="limpiarItem()" type='button' id="limpiar_articulo" class="btn btn-default form-control disabled"/>LIMPIAR ITEM</button>
+					</div>
+				</div>
+				<div class="col-md-2">
+					<div class="form-group">
+						<label class="col-sm-2 control-label" style="opacity: -1;">T</label>
+						<button onclick="carga(item_elegido)" type='button' id="carga_articulo" class="btn btn-success form-control disabled"/>CARGAR ITEM</button>
 					</div>
 				</div>
 			</div>
@@ -219,7 +237,7 @@ $(function() {
 
 			if(llevar_stock == 1){
 				item_elegido = ui.item;
-		    este = ui.item.id;
+				este = ui.item.id;
 				stock = ui.item.stock;
 				stock_minimo = ui.item.stock_minimo;
 				stock_deseado = ui.item.stock_deseado;
@@ -244,7 +262,7 @@ $(function() {
 		},
 
 		close: function( event, ui ) {
-			$("#articulo").val('');
+			//$("#articulo").val('');
 		}
 	});
 
@@ -277,12 +295,18 @@ function setEnabledEditItems(){
 	$("#cantidad").removeAttr('disabled');
 	$("#precio_costo").removeAttr('disabled');
 	$("#tipo").removeAttr('disabled');
+	$("#limpiar_articulo").removeClass('disabled');
+	$("#carga_articulo").removeClass('disabled');
+	$("#modificar_articulo").removeClass('disabled');
 }
 
 function setDisabledEditItems(){
 	$("#cantidad").attr('disabled','disabled');
 	$("#precio_costo").attr('disabled','disabled');
 	$("#tipo").attr('disabled','disabled');
+	$("#limpiar_articulo").addClass('disabled');
+	$("#carga_articulo").addClass('disabled');
+	$("#modificar_articulo").addClass('disabled');
 }
 
 function loadPrices(ui){
@@ -294,6 +318,18 @@ function loadPrices(ui){
 	$('#descuento').val(ui.item.descuento);
 	$('#descuento2').val(ui.item.descuento2);
 	$('#precio_venta_iva').val(ui.item.precio_venta_iva);
+}
+
+function limpiarItem(){
+	$("#articulo").val('');
+	resetPrices();
+	setDisabledEditItems();
+	$('#articulo').focus();
+}
+
+function modificarItem(item){
+	window.open('<?php echo base_url() ?>index.php/articulos/articulo_abm/edit/'+item.id, '_blank');
+	limpiarItem();
 }
 
 function resetPrices(){

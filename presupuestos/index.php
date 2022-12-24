@@ -12,7 +12,7 @@ include_once('config/values.php');
     <link rel="stylesheet" href="librerias/bootstrap/css/bootstrap.css" type="text/css" />
     <link rel="stylesheet" href="css/main.css" type="text/css" />
 </head>
-<body onload="inicializa()">
+<body >
 
 
 <div class="container">
@@ -22,14 +22,17 @@ include_once('config/values.php');
       BULONES SARMIENTO
       <button type="button" class="btn btn-default" data-toggle="modal" data-target="#cabeceraModal" id="btnModalCabecera">Cabecera</button>
       <button type="button" class="btn btn-default" data-toggle="modal" data-target="#comentarioModal">Comentario</button>
-      <button type="button" class="btn btn-default" data-toggle="modal" data-target="#imprimirModal">Imprimir</button>
+      <button type="button" class="btn btn-default" data-toggle="modal" data-target="#calcularCantidadModal" id="btn-calcular-cantidad">Calcular Cantidad</button>
+      <button type="button" class="btn btn-default" data-toggle="modal" data-target="#imprimirModal">Imprimir y Mail</button>
     </div>
   </div>
 
 <!-- Modals -->
 <?php include_once('modals/comentario.php'); ?>
 <?php include_once('modals/cabecera.php') ?>
+<?php include_once('modals/calcular_cantidad.php') ?>
 <?php include_once('modals/imprimir.php') ?>
+
 
 <!-- Segundo bloque carga de articulos -->
   <div class="panel panel-default">
@@ -49,7 +52,7 @@ include_once('config/values.php');
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Precio</label>
-                                <input class="form-control" id="px_unitario_rapido" readonly="true"/>
+                                <input class="form-control" id="px_unitario_rapido" readonly="true" />
                             </div>
                         </div>
                         <div class="col-md-2">

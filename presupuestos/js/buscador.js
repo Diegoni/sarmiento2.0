@@ -53,6 +53,17 @@ function limpia_cli() {
 
 
 function carga_presupuesto() {
+	$.ajax({
+		url : 'http://'+window.location.hostname+'/index.php/reglas/getReglas/5',
+		type: 'POST',
+		data : {
+			total:5,
+			cliente:5
+		}
+  	}).success( function( data ) {
+		console.log(JSON.parse(data));
+	});
+	/*
 	if($('#total_presupuesto').val() > 0) {
 		$('#cont_boton').prop('disabled', true);
 
@@ -85,9 +96,11 @@ function carga_presupuesto() {
 			}
 		} else {
 			if(cli_id != 0) {
-				guarda_detalle(),fin_presupuesto();
+				guarda_detalle(),
+				fin_presupuesto();
 			} else {
-				guarda_detalle(),fin_presupuesto();
+				guarda_detalle(),
+				fin_presupuesto();
 			}
 		}
 
@@ -95,6 +108,7 @@ function carga_presupuesto() {
 	} else {
 		alert("Presupuesto vacio");
 	}
+	*/
 }
 
 
@@ -135,7 +149,7 @@ function fin_presupuesto() {
 			com_publico:com_publico,
 			tipo_comprobante: tipo_comprobante
 		}
-  }).success( function( data ) {
+  	}).success( function( data ) {
 		alert('Se genero el presupuesto nro: '+data);
 		abrirNuevoTab(data);
 		location.reload();
@@ -549,3 +563,30 @@ $(document).ready(function(){
   		 $('#comentario').val('');
 	});
 });
+
+
+
+$("#btn-calcular-cantidad").on('click', function(){
+	$("#input-calcular-cantidad").focus();
+});
+
+
+$("#btnCalcularPrecioAccion").on('click', function(){
+	var precio = $("#input-calcular-cantidad").val();
+	var precio_unitario = $("#px_unitario_rapido").val();
+	
+	if(precio_unitario == ''){
+		alert("Se debe seleccionar un producto");
+		$('#calcularCantidadModal').modal('toggle');
+		$("#quickfind").focus();
+	} else if(precio == ''){
+		alert("No se puso nuevo sub total");
+	} else {
+		$("#cantidad").val(Number.parseFloat(precio / precio_unitario).toFixed(2));
+		$('#calcularCantidadModal').modal('toggle');
+		$("#carga_articulo").click();
+		$("#quickfind").focus();
+		
+	}
+});
+

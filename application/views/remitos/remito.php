@@ -65,7 +65,7 @@
 							'telefono'	=> $cliente->telefono,
 							'celular'	=> $cliente->celular,
 							'direccion'	=> $cliente->direccion,
-							'nextel'	=> $cliente->nextel
+							'mail'		=> $cliente->mail
 						);					
 					}
 				}
@@ -222,8 +222,8 @@
 					echo "<div class='col-sm-4'>".$array_cliente['celular']."</div>";
 				echo "</div>";
 				echo "<div class='row'>";	
-					echo "<label class='col-sm-2 control-label'>nextel</label>";
-					echo "<div class='col-sm-4'>".$array_cliente['nextel']."</div>";
+					echo "<label class='col-sm-2 control-label'>mail</label>";
+					echo "<div class='col-sm-4'>".$array_cliente['mail']."</div>";
 					echo "<label class='col-sm-2 control-label'>Dirección</label>";
 					echo "<div class='col-sm-4'>".$array_cliente['direccion']."</div>";
 				echo "</div>";
