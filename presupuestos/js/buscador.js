@@ -150,6 +150,7 @@ function fin_presupuesto() {
 			tipo_comprobante: tipo_comprobante
 		}
   	}).success( function( data ) {
+		$('#cont_boton').prop('disabled', false);
 		alert('Se genero el presupuesto nro: '+data);
 		abrirNuevoTab(data);
 		location.reload();

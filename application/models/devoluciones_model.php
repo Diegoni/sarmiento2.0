@@ -10,7 +10,7 @@ class Devoluciones_model extends MY_Model {
 		);
 	}
 
-	function getCliente($id_cliente, $all = NULL) {
+	function getCliente($id_cliente, $all = NULL, $fechaDesde = null) {
 		if($all == NULL) {
 			$sql =
 			"SELECT
@@ -42,6 +42,10 @@ class Devoluciones_model extends MY_Model {
 					`presupuesto` ON(devolucion.id_presupuesto = presupuesto.id_presupuesto)
 				WHERE
 					`presupuesto`.`id_cliente` = $id_cliente";
+		}
+
+		if( $fechaDesde != null){
+			$sql .= " AND DATE_FORMAT(devolucion.fecha, '%Y-%m-%d') >= '$fechaDesde'  ";
 		}
 
 		return $this->getQuery($sql);

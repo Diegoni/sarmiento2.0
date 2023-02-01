@@ -184,30 +184,21 @@ class Remitos extends MY_Controller {
 	 **********************************************************************************/
 
 
-		public function insert() {
+		public function insert($id_cliente = null) {
 			$db['texto']		= getTexto();
-			$db['clientes']		= $this->clientes_model->getRegistros();
 
-			if($this->input->post('buscar') == 1) {
-				$id_cliente = 0;
-
-				if($this->input->post('cliente_alias') != 0) {
-					$id_cliente = $this->input->post('cliente_alias');
-				} else if ($this->input->post('cliente_apellido') != 0) {
-					$id_cliente = $this->input->post('cliente_apellido');
-				}
-
-				if($id_cliente != 0) {
-					$datos = array(
-						'id_cliente'=> $id_cliente,
-						'tipo'		=> FORMAS_PAGO::CTA_CTE,
-						'estado'	=> ESTADO_PRESUPUESTO::FALTA_PAGO,
-					);
-					$db['id_cliente']		= $id_cliente;
-					$db['presupuestos']	= $this->presupuestos_model->getBusqueda($datos, 'AND');
-					$db['devoluciones']	= $this->devoluciones_model->getCliente($id_cliente);
-				}
-			}
+			if($id_cliente != null) {
+				
+				$datos = array(
+					'id_cliente'=> $id_cliente,
+					'tipo'		=> FORMAS_PAGO::CTA_CTE,
+					'estado'	=> ESTADO_PRESUPUESTO::FALTA_PAGO,
+				);
+				$db['id_cliente']		= $id_cliente;
+				$db['presupuestos']	= $this->presupuestos_model->getBusqueda($datos, 'AND');
+				$db['devoluciones']	= $this->devoluciones_model->getCliente($id_cliente);
+				$db['clientes']	= $this->clientes_model->getRegistro($id_cliente);
+		}
 
 			$this->setView('remitos/insert.php', $db);
 		}

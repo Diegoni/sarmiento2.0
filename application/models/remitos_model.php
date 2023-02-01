@@ -66,14 +66,18 @@ class Remitos_model extends MY_Model {
 		return $this->getQuery($sql);
 	}
 
-	function getCliente($id) {
+	function getCliente($id, $fechaDesde = null) {
 		$sql ="
 			SELECT
 				*
 			FROM
 				$this->_table
 			WHERE
-				id_cliente = $id
+				id_cliente = $id ";
+		if( $fechaDesde != null){
+			$sql .= " AND DATE_FORMAT(fecha, '%Y-%m-%d') >= '$fechaDesde'  ";
+		}
+		$sql .= "
 			ORDER BY
 				id_remito DESC";
 

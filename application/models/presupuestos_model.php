@@ -139,7 +139,7 @@ class Presupuestos_model extends MY_Model {
 	}
 
 
-	function getCliente($id){
+	function getCliente($id, $fechaDesde = null){
 		$sql =
 			"SELECT
 				*
@@ -150,7 +150,11 @@ class Presupuestos_model extends MY_Model {
 			INNER JOIN
 				estado_presupuesto ON(estado_presupuesto.id_estado = $this->_table.estado)
 			WHERE
-				id_cliente = $id
+				id_cliente = $id ";
+		if( $fechaDesde != null){
+			$sql .= " AND DATE_FORMAT(fecha, '%Y-%m-%d') >= '$fechaDesde'  ";
+		}
+		$sql .= "
 			ORDER BY
 				id_presupuesto DESC";
 
@@ -164,6 +168,19 @@ class Presupuestos_model extends MY_Model {
 				count(*) as TOTAL
 			FROM
 				$this->_table";
+
+		return $this->getQuery($sql);
+	}
+
+	
+	public function getPresupuestos(){
+		$sql =
+		"SELECT
+			*
+			FROM
+				`presupuesto`
+			WHERE
+				presupuesto.id_cliente != 0";
 
 		return $this->getQuery($sql);
 	}

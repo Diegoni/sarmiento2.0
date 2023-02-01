@@ -3,52 +3,14 @@
 	<div class="panel-heading">BULONES SARMIENTO</div>
 		<div class="panel-body">
 			<div class="form-group">
-				<form method="post" action="<?php echo base_url().'index.php/remitos/insertProcess'?>">
-				<label for="clientes" class="col-sm-1 control-label"><?php echo $texto['alias']?></label>
-
-				<div class="col-sm-4">
-					<select name="cliente_alias" class="form-control chosen-select" style=" width: 100%">
-						<option value="0"></option>
-						<?php foreach($clientes as $cliente){ ?>
-							<option value="<?php echo $cliente->id_cliente?>"
-							<?php
-							if($this->input->post('cliente')!==NULL && $this->input->post('cliente')==$cliente->id_cliente)
-							{
-								echo 'selected';
-							}
-							?>
-							>
-							<?php echo $cliente->alias?>
-							</option>
-						<?php } ?>
-					</select>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Cliente:</label>
+							<input class="form-control" type='text' name='cliente' id='cliente' placeholder="<?php echo (isset($presupuestos)) ? $clientes[0]->apellido.', '.$clientes[0]->nombre.' - '.$clientes[0]->alias : 'Nombre o Alias' ?>"/>
+						</div>
+					</div>
 				</div>
-
-				<label for="clientes" class="col-sm-1 control-label"><?php echo $texto['apellido']?></label>
-				<div class="col-sm-4">
-					<select name="cliente_apellido" class="form-control chosen-select" style=" width: 100%">
-						<option value="0"></option>
-						<?php foreach($clientes as $cliente){ ?>
-							<option value="<?php echo $cliente->id_cliente?>"
-							<?php
-							if($this->input->post('cliente')!==NULL && $this->input->post('cliente')==$cliente->id_cliente)
-							{
-								echo 'selected';
-							}
-							?>
-							>
-							<?php echo $cliente->nombre." ".$cliente->apellido?>
-							</option>
-						<?php } ?>
-					</select>
-				</div>
-
-				<div class="col-sm-2">
-					<button type="submit" class="btn btn-default form-control" name="buscar" value="1">
-						<?php echo $texto['buscar']?>
-					</button>
-				</div>
-				</form>
 			</div>
 
 			<?php
@@ -56,18 +18,15 @@
 			{
 				foreach($clientes as $cliente)
 				{
-					if($cliente->id_cliente == $id_cliente)
-					{
-						$array_cliente = array(
-							'alias'		=> $cliente->alias,
-							'nombre'	=> $cliente->nombre,
-							'apellido'	=> $cliente->apellido,
-							'telefono'	=> $cliente->telefono,
-							'celular'	=> $cliente->celular,
-							'direccion'	=> $cliente->direccion,
-							'mail'		=> $cliente->mail
-						);
-					}
+					$array_cliente = array(
+						'alias'		=> $cliente->alias,
+						'nombre'	=> $cliente->nombre,
+						'apellido'	=> $cliente->apellido,
+						'telefono'	=> $cliente->telefono,
+						'celular'	=> $cliente->celular,
+						'direccion'	=> $cliente->direccion,
+						'mail'	=> $cliente->mail
+					);
 				}
 			?>
 			<br>
@@ -229,7 +188,7 @@
 					echo "<div class='col-sm-4'>".$array_cliente['celular']."</div>";
 				echo "</div>";
 				echo "<div class='row'>";
-					echo "<label class='col-sm-2 control-label'>mail</label>";
+					echo "<label class='col-sm-2 control-label'>Mail</label>";
 					echo "<div class='col-sm-4'>".$array_cliente['mail']."</div>";
 					echo "<label class='col-sm-2 control-label'>Dirección</label>";
 					echo "<div class='col-sm-4'>".$array_cliente['direccion']."</div>";
@@ -287,3 +246,16 @@
 </div>
 </body>
 </html>
+<script>
+	$(function() {
+		$('#cliente').focus();
+		$("#cliente").autocomplete({
+		  source: "<?php echo base_url()?>index.php/clientes/searchCliente",
+		  minLength: 2,
+		  select: function(event,ui) {
+				id_cliente = ui.item.id;
+				window.location.replace("<?php echo base_url()?>index.php/remitos/insert/"+id_cliente);
+			},
+		});
+	});
+</script>

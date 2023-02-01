@@ -1,29 +1,154 @@
+
+<script src="https://cdn.datatables.net/buttons/2.3.2/js/dataTables.buttons.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.2/js/buttons.print.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.2/js/buttons.html5.min.js" type="text/javascript" charset="utf-8"></script>
+
 <script>
 $(document).ready(function() {
-  $('#table_presupuestos').DataTable();
-	$('#table_remitos').DataTable();
-	$('#table_devoluciones').DataTable();
-
+	$('#table_presupuestos').DataTable({
+        order: [[0, 'desc']],
+		language: {
+			"decimal": "",
+			"emptyTable": "No hay información",
+			"info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+			"infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+			"infoFiltered": "(Filtrado de _MAX_ total entradas)",
+			"infoPostFix": "",
+			"thousands": ",",
+			"lengthMenu": "Mostrar _MENU_ Entradas",
+			"loadingRecords": "Cargando...",
+			"processing": "Procesando...",
+			"search": "Buscar:",
+			"zeroRecords": "Sin resultados encontrados",
+			"paginate": {
+				"first": "Primero",
+				"last": "Ultimo",
+				"next": "Siguiente",
+				"previous": "Anterior"
+			}
+		},
+		dom: 'Bfrtip',
+        buttons: [
+			{
+				extend: 'print',
+				text: 'Imprimir',
+				autoPrint: true
+        	},'excel', 'pdf'
+        ]
+    });
+	$('#table_remitos').DataTable({
+        order: [[0, 'desc']],
+		language: {
+			"decimal": "",
+			"emptyTable": "No hay información",
+			"info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+			"infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+			"infoFiltered": "(Filtrado de _MAX_ total entradas)",
+			"infoPostFix": "",
+			"thousands": ",",
+			"lengthMenu": "Mostrar _MENU_ Entradas",
+			"loadingRecords": "Cargando...",
+			"processing": "Procesando...",
+			"search": "Buscar:",
+			"zeroRecords": "Sin resultados encontrados",
+			"paginate": {
+				"first": "Primero",
+				"last": "Ultimo",
+				"next": "Siguiente",
+				"previous": "Anterior"
+			}
+		},
+		dom: 'Bfrtip',
+        buttons: [
+			{
+				extend: 'print',
+				text: 'Imprimir',
+				autoPrint: true
+        	},'excel', 'pdf'
+        ]
+    });
+	$('#table_devoluciones').DataTable({
+        order: [[0, 'desc']],
+		language: {
+			"decimal": "",
+			"emptyTable": "No hay información",
+			"info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+			"infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+			"infoFiltered": "(Filtrado de _MAX_ total entradas)",
+			"infoPostFix": "",
+			"thousands": ",",
+			"lengthMenu": "Mostrar _MENU_ Entradas",
+			"loadingRecords": "Cargando...",
+			"processing": "Procesando...",
+			"search": "Buscar:",
+			"zeroRecords": "Sin resultados encontrados",
+			"paginate": {
+				"first": "Primero",
+				"last": "Ultimo",
+				"next": "Siguiente",
+				"previous": "Anterior"
+			}
+   	 	},
+		dom: 'Bfrtip',
+        buttons: [
+			{
+				extend: 'print',
+				text: 'Imprimir',
+				autoPrint: true
+        	},'excel', 'pdf'
+        ]
+    });
+	$('#table_resumen').DataTable({
+        order: [[0, 'desc']],
+		language: {
+			"decimal": "",
+			"emptyTable": "No hay información",
+			"info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+			"infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+			"infoFiltered": "(Filtrado de _MAX_ total entradas)",
+			"infoPostFix": "",
+			"thousands": ",",
+			"lengthMenu": "Mostrar _MENU_ Entradas",
+			"loadingRecords": "Cargando...",
+			"processing": "Procesando...",
+			"search": "Buscar:",
+			"zeroRecords": "Sin resultados encontrados",
+			"paginate": {
+				"first": "Primero",
+				"last": "Ultimo",
+				"next": "Siguiente",
+				"previous": "Anterior"
+			}
+		},
+		dom: 'Bfrtip',
+        buttons: [
+			{
+				extend: 'print',
+				text: 'Imprimir',
+				autoPrint: true
+        	},'excel', 'pdf'
+        ]
+    });
 } );
 </script>
+<?php
+$tableResumenFinal = [];
+?>
 <div class="container">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-default">
 			<div class="panel-heading">
 				<ul class="nav nav-tabs">
-					<li class="active">
-						<a href="#tab1" data-toggle="tab">Clientes</a>
-					</li>
-	    			<li>
-	    				<a href="#tab2" data-toggle="tab">Presupuestos</a>
-	    			</li>
-	    			<li>
-	    				<a href="#tab3" data-toggle="tab">Remitos</a>
-	    			</li>
-	    			<li>
-	    				<a href="#tab4" data-toggle="tab">Devoluciones</a>
-	    			</li>
+					<li class="active"><a href="#tab1" data-toggle="tab">Cliente</a></li>
+	    			<li><a href="#tab2" data-toggle="tab">Presupuestos</a></li>
+	    			<li><a href="#tab3" data-toggle="tab">Remitos</a></li>
+	    			<li><a href="#tab4" data-toggle="tab">Devoluciones</a></li>
+					<li><a href="#tab5" data-toggle="tab">Resumen</a></li>
+					
 				</ul>
 			</div>
 			<div class="panel-body">
@@ -78,6 +203,14 @@ $(document).ready(function() {
 								echo '<td>'.$row->tipo.'</td>';
 								echo '<td>'.$row->estado.'</td>';
 								echo '</tr>';
+
+								$tableResumenFinal[] = [
+									'tipo'	=> 'Presupuesto',
+									'id'	=> $row->id_presupuesto,
+									'fecha' => $row->fecha,
+									'haber'	=> $row->monto,
+									'debe'	=> 0,
+								];
 							}
 
 							echo '<tbody>';
@@ -119,6 +252,14 @@ $(document).ready(function() {
 								$total_r_resta = $total_r_resta + $resta;
 								$total_r_monto = $total_r_monto + $row->monto;
 								$total_r_cuenta = $total_r_cuenta + $row->devolucion;
+
+								$tableResumenFinal[] = [
+									'tipo'	=> 'Remito',
+									'id'	=> $row->id_remito,
+									'fecha' => $row->fecha,
+									'haber'	=> 0,
+									'debe'	=> $row->monto,
+								];
 							}
 
 							echo '<tbody>';
@@ -163,6 +304,14 @@ $(document).ready(function() {
 								$total_d_resta = $total_d_resta + $resta;
 								$total_d_monto = $total_d_monto + $row->monto;
 								$total_d_cuenta = $total_d_cuenta + $row->a_cuenta;
+
+								$tableResumenFinal[] = [
+									'tipo'	=> 'Devolucion',
+									'id'	=> $row->id_devolucion,
+									'fecha' => $row->fecha,
+									'haber'	=> 0,
+									'debe'	=> $row->monto,
+								];
 							}
 
 							echo '<tbody>';
@@ -201,7 +350,8 @@ $(document).ready(function() {
             				</div>
 						</div>
 
-						<div class="col-xs-12 divider text-center">
+						<?php if($fechaDesde == '2015-01-01'){ ?>
+							<div class="col-xs-12 divider text-center">
 							<div class="col-xs-12 col-sm-4 emphasis">
 								<div class="small-box bg-aqua">
                                 <div class="inner">
@@ -294,8 +444,64 @@ $(document).ready(function() {
                                 </a>
                             	</div>
 							</div>
+						<?php 	
+						} 
+						?>
             			</div>
     	 			</div>
+					<div class="tab-pane" id="tab5">
+					<form method="post">
+						<div class="col-md-4">
+							<label>Fecha Desde</label>
+						</div>
+						<div class="col-md-4">
+							<input type="date" name="fechaDesde" id="fechaDesde" value="<?php echo $fechaDesde; ?>" max="<?php echo date("Y-m-d"); ?>" class="form-control" />
+						</div>
+						<div class="col-md-4">
+							<button type="submit" class="btn btn-primary form-control"> Cambiar </button>
+						</div>
+					</form>	
+					
+					<?php
+						if(count($tableResumenFinal))
+						{
+							echo '<table class="table table-hover" id="table_resumen">';
+							echo '<thead>';
+							echo '<tr>';
+								echo '<th>Fecha</th>';
+								echo '<th>Numero</th>';
+								echo '<th>Tipo</th>';
+								echo '<th>Debe</th>';
+								echo '<th>Haber</th>';
+							echo '</tr>';
+							echo '</thead>';
+							echo '<tbody>';
+
+							usort($tableResumenFinal, function($a1, $a2) {
+								$v1 = strtotime($a1['fecha']);
+								$v2 = strtotime($a2['fecha']);
+								return $v2 - $v1;
+							 });
+
+							foreach ($tableResumenFinal as $row)
+							{
+								$debe = ($row['debe'] > 0) ? '$ '.round($row['debe'], 2) : '';
+								$haber = ($row['haber'] > 0) ? '$ '.round($row['haber'], 2) : '';
+								
+								echo '<tr>';
+									echo '<td>'.date('Y-m-d', strtotime($row['fecha'])).'</td>';
+									echo '<td>'.$row['id'].'</td>';
+									echo '<td>'.$row['tipo'].'</td>';
+									echo '<td>'.$debe.'</td>';
+									echo '<td>'.$haber.'</td>';
+								echo '</tr>';
+							}
+
+							echo '<tbody>';
+							echo '</table>';
+						}
+						?>
+					</div>
 				</div>
 			</div>
 			<?php
