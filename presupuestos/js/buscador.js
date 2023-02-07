@@ -9,6 +9,7 @@ var porc_iva_art;
 var nuevo			= true;
 var CONTADO = 1;
 var CTA_CTE = 2;
+var TARJETA = 3;
 var CANCELADO = 2;
 var FALTA_PAGO = 1;
 var COMENTARIO_PUBLICO = 1;
@@ -53,17 +54,7 @@ function limpia_cli() {
 
 
 function carga_presupuesto() {
-	$.ajax({
-		url : 'http://'+window.location.hostname+'/index.php/reglas/getReglas/5',
-		type: 'POST',
-		data : {
-			total:5,
-			cliente:5
-		}
-  	}).success( function( data ) {
-		console.log(JSON.parse(data));
-	});
-	/*
+
 	if($('#total_presupuesto').val() > 0) {
 		$('#cont_boton').prop('disabled', true);
 
@@ -108,7 +99,7 @@ function carga_presupuesto() {
 	} else {
 		alert("Presupuesto vacio");
 	}
-	*/
+	
 }
 
 
@@ -129,7 +120,7 @@ function fin_presupuesto() {
 	vendedor	= $('#vendedor').val();
 	comentario	= $("#comentario").val();
 	com_publico	= ($('#com_publico').prop('checked')) ? COMENTARIO_PUBLICO : COMENTARIO_PRIVADO;
-	aestado = (atipo == CONTADO) ? CANCELADO : FALTA_PAGO;
+	aestado = (atipo == CONTADO || atipo == TARJETA) ? CANCELADO : FALTA_PAGO;
 	tipo_comprobante	= $("#tipo_comprobante").val();
 
 	$.ajax({

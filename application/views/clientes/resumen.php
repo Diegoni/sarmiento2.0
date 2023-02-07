@@ -102,7 +102,7 @@ $(document).ready(function() {
         ]
     });
 	$('#table_resumen').DataTable({
-        order: [[0, 'desc']],
+        order: [[0, 'asc']],
 		language: {
 			"decimal": "",
 			"emptyTable": "No hay información",
@@ -160,6 +160,7 @@ $tableResumenFinal = [];
 						$total_p_tarjeta = 0;
 						$total_p_ctacte = 0;
 						$total_p_cuenta = 0;
+						$total_p_anulado = 0;
 
 						if($presupuestos)
 						{
@@ -179,7 +180,10 @@ $tableResumenFinal = [];
 
 							foreach ($presupuestos as $row)
 							{
-								if($row->id_tipo == 1)
+								
+								if($row->id_estado == 3){
+									$total_p_anulado += $row->monto;
+								}else if($row->id_tipo == 1 || $row->id_tipo == 3)
 								{
 									$row->a_cuenta = $row->monto;
 									$total_p_contado = $total_p_contado + $row->monto;
@@ -199,17 +203,18 @@ $tableResumenFinal = [];
 								echo '<td>'.$row->id_presupuesto.'</td>';
 								echo '<td>'.date('d-m-Y', strtotime($row->fecha)).'</td>';
 								echo '<td class="success">$ '.round($row->monto, 2).'</td>';
-								echo '<td>$ '.round($row->a_cuenta,2).'</td>';
+								echo '<td>$ '.round($row->a_cuenta, 2).'</td>';
 								echo '<td>'.$row->tipo.'</td>';
 								echo '<td>'.$row->estado.'</td>';
 								echo '</tr>';
 
 								$tableResumenFinal[] = [
-									'tipo'	=> 'Presupuesto',
+									'id_tipo' => 1,
+									'tipo'	=> 'Presupuesto '.$row->tipo,
 									'id'	=> $row->id_presupuesto,
 									'fecha' => $row->fecha,
-									'haber'	=> $row->monto,
-									'debe'	=> 0,
+									'estado' => $row->estado,
+									'monto'	=> $row->monto,
 								];
 							}
 
@@ -254,11 +259,12 @@ $tableResumenFinal = [];
 								$total_r_cuenta = $total_r_cuenta + $row->devolucion;
 
 								$tableResumenFinal[] = [
+									'id_tipo' => 2,
 									'tipo'	=> 'Remito',
 									'id'	=> $row->id_remito,
 									'fecha' => $row->fecha,
-									'haber'	=> 0,
-									'debe'	=> $row->monto,
+									'monto'	=> $row->monto,
+									'estado' => '',
 								];
 							}
 
@@ -306,11 +312,12 @@ $tableResumenFinal = [];
 								$total_d_cuenta = $total_d_cuenta + $row->a_cuenta;
 
 								$tableResumenFinal[] = [
+									'id_tipo' => 3,
 									'tipo'	=> 'Devolucion',
 									'id'	=> $row->id_devolucion,
 									'fecha' => $row->fecha,
-									'haber'	=> 0,
-									'debe'	=> $row->monto,
+									'monto'	=> $row->monto,
+									'estado' => $row->nota,
 								];
 							}
 
@@ -325,7 +332,7 @@ $tableResumenFinal = [];
 						{
 							$total_vendido = $total_p_contado + $total_p_tarjeta + $total_p_ctacte;
 							$total_cobrado = $total_p_contado + $total_p_tarjeta + $total_p_cuenta;
-							$deuda = $total_vendido - $total_cobrado;
+							$deuda = $total_vendido - $total_cobrado - $total_d_monto;
 
 							foreach ($clientes as $row)
 							{
@@ -393,7 +400,7 @@ $tableResumenFinal = [];
             			</div>
 
             			<div class="col-xs-12 divider text-center">
-                			<div class="col-xs-12 col-sm-3 emphasis">
+                			<div class="col-xs-12 col-sm-4 emphasis">
 								<div class="small-box bg-blue">
                                 <div class="inner">
                                     <h4>
@@ -406,7 +413,7 @@ $tableResumenFinal = [];
                             	</div>
 							</div>
 
-							<div class="col-xs-12 col-sm-3 emphasis">
+							<div class="col-xs-12 col-sm-4 emphasis">
 								<div class="small-box bg-maroon">
                                 <div class="inner">
                                     <h4>
@@ -419,7 +426,7 @@ $tableResumenFinal = [];
                             	</div>
 							</div>
 
-							<div class="col-xs-12 col-sm-3 emphasis">
+							<div class="col-xs-12 col-sm-4 emphasis">
 								<div class="small-box bg-olive">
                                 <div class="inner">
                                     <h4>
@@ -432,15 +439,28 @@ $tableResumenFinal = [];
                             	</div>
 							</div>
 
-							<div class="col-xs-12 col-sm-3 emphasis">
+							<div class="col-xs-12 col-sm-4 emphasis">
 								<div class="small-box bg-orange">
                                 <div class="inner">
                                     <h4>
-                                        $ <?php echo $total_p_ctacte ?>
+                                        $ <?php echo $total_p_anulado ?>
                                     </h4>
                                 </div>
                                 <a href="#" class="small-box-footer">
                                 	ANULADO
+                                </a>
+                            	</div>
+							</div>
+
+							<div class="col-xs-12 col-sm-4 emphasis">
+								<div class="small-box bg-danger">
+                                <div class="inner">
+                                    <h4>
+                                        $ <?php echo $total_d_monto ?>
+                                    </h4>
+                                </div>
+                                <a href="#" class="small-box-footer">
+                                	DEVOLUCION
                                 </a>
                             	</div>
 							</div>
@@ -471,29 +491,34 @@ $tableResumenFinal = [];
 								echo '<th>Fecha</th>';
 								echo '<th>Numero</th>';
 								echo '<th>Tipo</th>';
-								echo '<th>Debe</th>';
-								echo '<th>Haber</th>';
+								echo '<th>Estado</th>';
+								echo '<th>Monto</th>';
+								echo '<th>Saldo</th>';
 							echo '</tr>';
 							echo '</thead>';
 							echo '<tbody>';
 
-							usort($tableResumenFinal, function($a1, $a2) {
-								$v1 = strtotime($a1['fecha']);
-								$v2 = strtotime($a2['fecha']);
-								return $v2 - $v1;
-							 });
+							$saldo = 0;
 
 							foreach ($tableResumenFinal as $row)
 							{
-								$debe = ($row['debe'] > 0) ? '$ '.round($row['debe'], 2) : '';
-								$haber = ($row['haber'] > 0) ? '$ '.round($row['haber'], 2) : '';
-								
+								$monto = ($row['monto'] > 0) ? '$ '.round($row['monto'], 2) : '';
+							
+								if($row['tipo'] == 'Presupuesto Cta Cte' ){
+									$saldo += $row['monto'];
+								}
+
+								if($row['tipo'] == 'Remito' || $row['tipo'] == 'Devolucion' ){
+									$saldo -= $row['monto'];
+								}
+
 								echo '<tr>';
 									echo '<td>'.date('Y-m-d', strtotime($row['fecha'])).'</td>';
 									echo '<td>'.$row['id'].'</td>';
 									echo '<td>'.$row['tipo'].'</td>';
-									echo '<td>'.$debe.'</td>';
-									echo '<td>'.$haber.'</td>';
+									echo '<td>'.$row['estado'].'</td>';
+									echo '<td>'.$monto.'</td>';
+									echo '<td>$ '.round($saldo, 2).'</td>';
 								echo '</tr>';
 							}
 

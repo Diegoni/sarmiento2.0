@@ -1,6 +1,6 @@
 <!-- imprimir -->
 <?php
-include_once('../config/conexion.php');
+include_once('config/conexion.php');
 $sql = "
 SELECT
   *
