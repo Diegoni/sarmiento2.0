@@ -51,13 +51,17 @@ function limpia_cli() {
 
 -----------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------*/
+function carga_presupuesto(){
+	$('#cont_boton').prop('disabled', true);
+	setTimeout(function(){
+		control_presupuesto();
+	}, 500);
+}
 
 
-function carga_presupuesto() {
+function control_presupuesto() {
 
 	if($('#total_presupuesto').val() > 0) {
-		$('#cont_boton').prop('disabled', true);
-
 		var bandera_tipo_pago = $("#forma_pago").val();
 		var cli_id = $("#id_cliente").val();
 		var pertmite_cta_cte = $("#pertmite_cta_cte").val();
@@ -94,11 +98,14 @@ function carga_presupuesto() {
 				fin_presupuesto();
 			}
 		}
-
-		$('#cont_boton').prop('disabled', false);
 	} else {
 		alert("Presupuesto vacio");
 	}
+
+
+	setTimeout(function(){
+		$('#cont_boton').prop('disabled', false);
+	}, 500);
 	
 }
 
@@ -140,20 +147,31 @@ function fin_presupuesto() {
 			com_publico:com_publico,
 			tipo_comprobante: tipo_comprobante
 		}
-  	}).success( function( data ) {
+  	}).success( function( id_presupuesto ) {
 		$('#cont_boton').prop('disabled', false);
-		alert('Se genero el presupuesto nro: '+data);
-		abrirNuevoTab(data);
+		alert('Se genero el presupuesto nro: '+id_presupuesto);
+		enviarMail(id_presupuesto);
+	});
+}
+
+function enviarMail(id_presupuesto){
+	  $.ajax({
+		url : 'http://'+window.location.hostname+'/sarmiento2.0/index.php/mails/enviar/'+id_presupuesto,
+		type: 'GET',
+		data : {}
+  	}).success( function( data ) {
+		if('No se envio' != data){
+			alert(data);
+		}
+		abrirNuevoTab(id_presupuesto);
 		location.reload();
 	});
-
-
 }
 
 function abrirNuevoTab(id_presupuesto) {
 	var url = 'http://'+window.location.hostname+'/sarmiento2.0/index.php/presupuestos/setTicket/'+id_presupuesto;
-  var win = window.open(url, '_blank');
-  // Cambiar el foco al nuevo tab (punto opcional)
+  	var win = window.open(url, '_blank');
+  	// Cambiar el foco al nuevo tab (punto opcional)
 	win.focus();
 }
 

@@ -70,8 +70,13 @@ class CAEPdf extends FPDF {
 		$this->Cell(89,$this->dataSize, $cadena,0,0,'L');
 		$this->Ln($this->dataSize);
 
-		$this->Cell(89,$this->dataSize,"",0,0,'L');
-		$this->Cell(20,$this->dataSize,'',0,0,'C');
+		if(($this->letra != self::LETRA_PRESUPUESTO) ){
+			$this->Cell(89,$this->dataSize,"",0,0,'L');
+			$this->Cell(20,$this->dataSize,'',0,0,'C');
+		} else {
+			$this->Cell(5,$this->dataSize,"",0,0,'L');
+			$this->Cell(27,$this->dataSize,'CUIT: 23312465019',0,0,'C');
+		}
 		$fecha = ($this->letra != self::LETRA_PRESUPUESTO) ? $this->_factura->cbte_fch : $this->_presupuesto->fecha;
 		$fecha = 'Fecha emision: '.date("d-m-Y", strtotime($fecha));
 		$this->Cell(89,$this->dataSize, ($this->letra != self::LETRA_PRESUPUESTO) ? $fecha : '',0,0,'L');
@@ -83,8 +88,14 @@ class CAEPdf extends FPDF {
 		$this->Cell(89,$this->dataSize, ($this->letra != self::LETRA_PRESUPUESTO) ? $cuit : $fecha,0,0,'L');
 		$this->Ln($this->dataSize);
 
-		$this->Cell(89,$this->dataSize,"",0,0,'L');
-		$this->Cell(20,$this->dataSize,'',0,0,'C');
+		if(($this->letra != self::LETRA_PRESUPUESTO) ){
+			$this->Cell(89,$this->dataSize,"",0,0,'L');
+			$this->Cell(20,$this->dataSize,'',0,0,'C');
+		} else {
+			$this->Cell(5,$this->dataSize,"",0,0,'L');
+			$this->Cell(50,$this->dataSize,'Mail: diego_nieto_1@hotmail.com',0,0,'C');
+		}
+		
 		if ($this->letra != self::LETRA_PRESUPUESTO) {
 			$dataChar = 'Ingresos brutos: '.$this->_empresa->ingreso_brutos;
 		} else {
@@ -93,8 +104,15 @@ class CAEPdf extends FPDF {
 		$this->Cell(89,$this->dataSize, $dataChar,0,0,'L');
 		$this->Ln($this->dataSize);
 
-		$this->Cell(89,$this->dataSize,"  Condicion frente el Iva: ".$this->_empresa->iva,0,0,'L');
-		$this->Cell(20,$this->dataSize,'',0,0,'C');
+
+		if(($this->letra != self::LETRA_PRESUPUESTO) ){
+			$this->Cell(89,$this->dataSize,"  Condicion frente el Iva: ".$this->_empresa->iva,0,0,'L');
+			$this->Cell(20,$this->dataSize,'',0,0,'C');
+		} else {
+			$this->Cell(89,$this->dataSize,"  Razon Social: NIETO DIEGO JESUS",0,0,'L');
+			$this->Cell(20,$this->dataSize,'',0,0,'C');	}
+
+		
 		if ($this->letra != self::LETRA_PRESUPUESTO) {
 			$dataChar = 'Inicio de actividades: '.date("d-m-Y", strtotime($this->_empresa->inicio_actividad));
 		} else {
@@ -102,7 +120,7 @@ class CAEPdf extends FPDF {
 			if($this->_vendedores){
 				foreach ($this->_vendedores as $vendedor) {
 					if($vendedor->id_vendedor == $this->_presupuesto->id_vendedor){
-						$dataChar = 'Vendedor: '.$vendedor->vendedor;
+						//$dataChar = 'Vendedor: '.$vendedor->vendedor;
 					}
 				}
 			}

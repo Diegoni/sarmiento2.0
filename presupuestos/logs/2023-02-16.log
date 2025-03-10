@@ -1,0 +1,2 @@
+2023-02-16 21:10:31 INSERT INTO reglon_presupuesto ( id_presupuesto, id_articulo, cantidad, precio, estado ) VALUES( 221804, 19142, 1, 355.715, 1)
+2023-02-16 21:10:311

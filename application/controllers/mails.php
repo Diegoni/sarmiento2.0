@@ -39,60 +39,66 @@ class Mails extends MY_Controller {
 
 			$empresa = $this->empresas_model->getRegistros(1);
 			$empresa = $empresa[0];
-
+			
 			$pdf = new FPDF('P', 'pt', array(500,233));
 			$pdf = new CAEPdf();
 			$pdf->setValues($presupuesto, $rengloPresupuesto, $cliente, $empresa, $factura, $vendedores);
 			$pdf->AddPage();
 			$pdf->detail();
-
+			
 			// email stuff (change data below)
 			$from = "bulonessarmiento@bulonessarmiento.com"; 
 			$to = $cliente->mail; 
 			$subject = "Bulones Sarmiento comprobante de compra"; 
 			//$message = "<p>Please see the attachment.</p>";
 
-			// a random hash will be necessary to send mixed content
-			$separator = md5(time());
+			if (filter_var($to, FILTER_VALIDATE_EMAIL)){
+				// a random hash will be necessary to send mixed content
+				$separator = md5(time());
 
-			// carriage return type (we use a PHP end of line constant)
-			$eol = PHP_EOL;
+				// carriage return type (we use a PHP end of line constant)
+				$eol = PHP_EOL;
 
-			// attachment name
-			$filename = "Comprobante.pdf";
+				// attachment name
+				$filename = "Comprobante.pdf";
 
-			// encode data (puts attachment in proper format)
-			$pdfdoc = $pdf->Output("", "S");
-			$attachment = chunk_split(base64_encode($pdfdoc));
+				// encode data (puts attachment in proper format)
+				$pdfdoc = $pdf->Output("", "S");
+				$attachment = chunk_split(base64_encode($pdfdoc));
 
-			// main header
-			$headers  = "From: ".$from.$eol;
-			$headers .= "MIME-Version: 1.0".$eol; 
-			$headers .= "Content-Type: multipart/mixed; boundary=\"".$separator."\"";
+				// main header
+				$headers  = "From: ".$from.$eol;
+				$headers .= "MIME-Version: 1.0".$eol; 
+				$headers .= "Content-Type: multipart/mixed; boundary=\"".$separator."\"";
 
-			// no more headers after this, we start the body! //
+				// no more headers after this, we start the body! //
 
-			$body = "--".$separator.$eol;
-			$body .= "Content-Transfer-Encoding: 7bit".$eol.$eol;
-			$body .= "Hola, ".$cliente->nombre." ".$cliente->apellido.$eol;
-			$body .= "Te enviamos adjunta el comprobante de tu compra. ".$eol;
+				$body = "--".$separator.$eol;
+				$body .= "Content-Transfer-Encoding: 7bit".$eol.$eol;
+				$body .= "Hola, ".$cliente->nombre." ".$cliente->apellido.$eol;
+				$body .= "Te enviamos adjunta el comprobante de tu compra. ".$eol;
 
-			// message
-			$body .= "--".$separator.$eol;
-			$body .= "Content-Type: text/html; charset=\"iso-8859-1\"".$eol;
-			$body .= "Content-Transfer-Encoding: 8bit".$eol.$eol;
-			//$body .= $message.$eol;
+				// message
+				$body .= "--".$separator.$eol;
+				$body .= "Content-Type: text/html; charset=\"iso-8859-1\"".$eol;
+				$body .= "Content-Transfer-Encoding: 8bit".$eol.$eol;
+				//$body .= $message.$eol;
 
-			// attachment
-			$body .= "--".$separator.$eol;
-			$body .= "Content-Type: application/octet-stream; name=\"".$filename."\"".$eol; 
-			$body .= "Content-Transfer-Encoding: base64".$eol;
-			$body .= "Content-Disposition: attachment".$eol.$eol;
-			$body .= $attachment.$eol;
-			$body .= "--".$separator."--";
+				// attachment
+				$body .= "--".$separator.$eol;
+				$body .= "Content-Type: application/octet-stream; name=\"".$filename."\"".$eol; 
+				$body .= "Content-Transfer-Encoding: base64".$eol;
+				$body .= "Content-Disposition: attachment".$eol.$eol;
+				$body .= $attachment.$eol;
+				$body .= "--".$separator."--";
 
-			// send message
-			mail($to, $subject, $body, $headers);
+				// send message
+				mail($to, $subject, $body, $headers);
+
+				echo 'Se envio mail a '-$to;
+			} else {
+				echo 'No se envio';
+			}
 		}
 	}
 }

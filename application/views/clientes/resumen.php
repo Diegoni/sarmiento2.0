@@ -103,6 +103,7 @@ $(document).ready(function() {
     });
 	$('#table_resumen').DataTable({
         order: [[0, 'asc']],
+		ordering: false,
 		language: {
 			"decimal": "",
 			"emptyTable": "No hay información",
@@ -485,6 +486,9 @@ $tableResumenFinal = [];
 					<?php
 						if(count($tableResumenFinal))
 						{
+
+							array_multisort(array_column($tableResumenFinal, 'fecha'), SORT_ASC, $tableResumenFinal);
+
 							echo '<table class="table table-hover" id="table_resumen">';
 							echo '<thead>';
 							echo '<tr>';
@@ -512,6 +516,10 @@ $tableResumenFinal = [];
 									$saldo -= $row['monto'];
 								}
 
+								if($row['estado'] == '<label class="label label-danger">Anulada</label>'){
+									$monto = '<del>'.$monto.'</del>';
+								}
+
 								echo '<tr>';
 									echo '<td>'.date('Y-m-d', strtotime($row['fecha'])).'</td>';
 									echo '<td>'.$row['id'].'</td>';
@@ -521,6 +529,17 @@ $tableResumenFinal = [];
 									echo '<td>$ '.round($saldo, 2).'</td>';
 								echo '</tr>';
 							}
+
+							echo '<tfoot>';
+							echo '<tr>';
+								echo '<th></th>';
+								echo '<th></th>';
+								echo '<th></th>';
+								echo '<th></th>';
+								echo '<th>Saldo total</th>';
+								echo '<th>$ '.round($saldo, 2).'</th>';
+							echo '</tr>';
+							echo '</tfoot>';
 
 							echo '<tbody>';
 							echo '</table>';
