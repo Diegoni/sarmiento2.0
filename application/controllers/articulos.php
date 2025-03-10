@@ -10,6 +10,7 @@ class Articulos extends My_Controller {
 		$this->load->model('categorias_model');
 		$this->load->model('subcategorias_model');
 		$this->load->model('actualizaciones_precion_model');
+		$this->load->model('stock_model');
 
 		$this->load->library('grocery_CRUD');
 	}
@@ -126,7 +127,8 @@ class Articulos extends My_Controller {
 		$crud->where('articulo.id_estado = 1');
 
 		$crud->set_table('articulo');
-		$crud->columns('cod_proveedor','descripcion','precio_costo','precio_venta_iva');
+		$crud->columns('cod_proveedor','descripcion', 'stock', 'precio_costo','precio_venta_iva');
+		//$crud->callback_column('stock', array($this, 'getStock'));
 		$crud->display_as('descripcion','Descripción')
 			 ->display_as('id_proveedor','Proveedor')
 			 ->display_as('id_grupo','Grupo')
@@ -181,6 +183,12 @@ class Articulos extends My_Controller {
 		$output = $crud->render();
 
 		$this->crudView($output);
+	}
+
+	function getStock($value, $row) {
+		echo var_dump($value);
+		exit;
+		return $this->stock_model->totalStock($row->id_articulo);
 	}
 
 	function stockArticulo($id) {

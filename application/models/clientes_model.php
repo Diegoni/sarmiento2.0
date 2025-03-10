@@ -18,6 +18,8 @@ class Clientes_model extends My_Model {
 				`cliente`
 			LEFT JOIN
 				condicion_iva ON(cliente.id_condicion_iva = condicion_iva.id_condicion_iva)
+			LEFT JOIN
+				tipo_cliente ON(cliente.id_tipo = tipo_cliente.id_tipo)
 			WHERE
 				cliente.id_estado = 1 AND
 				cliente.id_cliente != 0";

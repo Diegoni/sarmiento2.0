@@ -276,12 +276,12 @@ $tableResumenFinal = [];
 					</div>
 					<div class="tab-pane" id="tab4">
 						<?php
+						$total_d_resta = 0;
+						$total_d_monto = 0;
+						$total_d_cuenta = 0;
+						
 						if($devoluciones)
 						{
-							$total_d_resta = 0;
-							$total_d_monto = 0;
-							$total_d_cuenta = 0;
-
 							echo '<table class="table table-hover" id="table_devoluciones">';
 							echo '<thead>';
 							echo '<tr>';

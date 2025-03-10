@@ -10,7 +10,7 @@ class Clientes extends MY_Controller {
 		$this->load->model('devoluciones_model');
 		$this->load->model('remitos_model');
 		$this->load->model('reglas_ventas_model');
-		
+		$this->load->model('config_model');		
 
 		$this->load->library('grocery_CRUD');
 	}
@@ -224,6 +224,7 @@ class Clientes extends MY_Controller {
 
 
 	function estado_cuentas() {
+		$this->diasPago = $this->config_model->getConfig('dias_pago');
 
 		$clientes = $this->clientes_model->getClientes();
 		$presupuestos = $this->presupuestos_model->getPresupuestos();
@@ -239,11 +240,36 @@ class Clientes extends MY_Controller {
 			}
 			
 			$db['estado_cuentas'][$cliente->id_cliente]['alias'] = $this->_callback_unir_nombre('', $cliente);
+			$db['estado_cuentas'][$cliente->id_cliente]['tipo'] = $cliente->tipo;
+			$db['estado_cuentas'][$cliente->id_cliente]['atraso'] = $this->diasDeAtraso($presupuestos_cliente);
 			$db['estado_cuentas'][$cliente->id_cliente]['deuda'] = $this->calcularMontoDeuda($presupuestos_cliente);
 		}
 
 
 		$this->setView('clientes/estado_cuenta.php', $db);
+	}
+
+	function diasDeAtraso($presupuestos){
+
+		$atraso = 0;
+
+		if($presupuestos){
+			foreach ($presupuestos as $row){	
+				$fecha = date('Y-m-d', strtotime($row->fecha));			
+				$nuevafecha = strtotime ( '+'.$this->diasPago.' day' , strtotime ( $fecha ) ) ;
+				$nuevafecha = date ( 'Y-m-d' , $nuevafecha );
+
+				if($nuevafecha < date('Y-m-d') && $row->estado == 1) {
+					$datetime1 = date_create($fecha);
+					$datetime2 = date_create(date('Y-m-d'));
+					$interval = date_diff($datetime1, $datetime2);
+
+					$atraso = ($interval->format('%a') > $atraso ) ? $interval->format('%a') : $atraso;
+				} 
+			}
+		} 
+
+		return $atraso;		
 	}
 
 	function calcularMontoDeuda($presupuestos){

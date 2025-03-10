@@ -9,7 +9,7 @@
 <script>
 $(document).ready(function() {
 	$('#table_resumen').DataTable({
-        order: [[1, 'desc']],
+        order: [[3, 'desc']],
 		language: {
 			"decimal": "",
 			"emptyTable": "No hay información",
@@ -56,6 +56,8 @@ $tableResumenFinal = [];
 				echo '<thead>';
 				echo '<tr>';
 					echo '<th>Alias</th>';
+					echo '<th>Tipo</th>';
+					echo '<th>Días de atraso</th>';
 					echo '<th>Deuda</th>';
 				echo '</tr>';
 				echo '</thead>';
@@ -65,6 +67,8 @@ $tableResumenFinal = [];
 				{
 					echo '<tr>';
 						echo '<td><a href="'.base_url().'index.php/clientes/resumen/'.$cliente_id.'" target="_blank">'.$row['alias'].'</a></td>';
+						echo '<td>'.$row['tipo'].'</td>';
+						echo '<td>'.$row['atraso'].'</td>';
 						echo '<td>$ '.round($row['deuda'], 2).'</td>';
 					echo '</tr>';
 				}
